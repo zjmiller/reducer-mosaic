@@ -20,7 +20,7 @@ export const FEHonestWorkspaceViewer: React.FC<any> = ({
     <div>
       <div
         style={{
-          backgroundColor: "rgba(0,100,0, 0.1)",
+          backgroundColor: "#e8f8e8",
           borderLeft: "3px solid #696",
           padding: "10px",
           paddingLeft: "20px",

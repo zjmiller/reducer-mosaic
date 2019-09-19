@@ -25,7 +25,7 @@ export const FEMaliciousWorkspaceViewer: React.FC<any> = ({
     <div>
       <div
         style={{
-          backgroundColor: "rgba(100,0,0, 0.1)",
+          backgroundColor: "#f8e8e8",
           borderLeft: "3px solid #966",
           padding: "10px",
           paddingLeft: "20px",

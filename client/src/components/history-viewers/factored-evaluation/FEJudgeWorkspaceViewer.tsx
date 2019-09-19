@@ -52,7 +52,7 @@ export const FEJudgeWorkspaceViewer: React.FC<any> = ({
     <div>
       <div
         style={{
-          backgroundColor: "rgba(0,0,0, 0.1)",
+          backgroundColor: "#e8e8e8",
           borderLeft: "3px solid #666",
           marginBottom: "10px",
           padding: "10px",
