@@ -84,7 +84,8 @@ const Import: React.FC<ImportProps> = ({
           borderRadius: "3px",
           color: "#fff",
           cursor: "pointer",
-          padding: "1px 4px"
+          padding: "1px 4px",
+          whiteSpace: "nowrap"
         }}
       >
         {isLocked && "🔒"}${pointerNumber}
