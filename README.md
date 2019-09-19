@@ -6,4 +6,4 @@ Check out the directory structure of [server/src](server/src) to get a feel for 
 
 Many particular abstraction details are orthogonal to the reducer debate. In fact, the `IScript` interface in [server/src/script/index.ts](server/src/script/index.ts) doesn't even require a reducer-based implementation.
 
-You can find the FE reducer [here](server/src/script-registry/factored-evaluation-script/index.ts).
+You can find the FE reducer [here](server/src/script-registry/factored-evaluation-script/root-reducer.ts).
