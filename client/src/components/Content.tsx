@@ -116,7 +116,8 @@ const Import: React.FC<ImportProps> = ({
           borderRadius: "3px 0 0 3px",
           color: "#fff",
           marginRight: "0 3px 0 1px",
-          padding: "1px 4px"
+          padding: "1px 4px",
+          whiteSpace: "nowrap"
         }}
       >
         ${pointerNumber}
