@@ -88,7 +88,10 @@ const Import: React.FC<ImportProps> = ({
           whiteSpace: "nowrap"
         }}
       >
-        {isLocked && "🔒"}${pointerNumber}
+        <span style={{ filter: "brightness(110%) saturate(400%)" }}>
+          {isLocked && "🔒"}
+        </span>
+        ${pointerNumber}
       </span>
     );
   }
