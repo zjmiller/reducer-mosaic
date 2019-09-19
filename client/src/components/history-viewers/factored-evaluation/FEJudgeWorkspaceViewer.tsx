@@ -104,7 +104,6 @@ export const FEJudgeWorkspaceViewer: React.FC<any> = ({
         </div>
         <div
           style={{
-            alignItems: "center",
             display: "flex",
             marginBottom: "8px"
           }}
@@ -129,7 +128,6 @@ export const FEJudgeWorkspaceViewer: React.FC<any> = ({
         </div>
         <div
           style={{
-            alignItems: "center",
             display: "flex",
             marginBottom: "8px"
           }}
