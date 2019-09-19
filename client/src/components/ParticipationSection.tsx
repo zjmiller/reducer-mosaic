@@ -79,7 +79,10 @@ export const ParticipationSection: React.FC = () => {
     <div>
       <Button
         color="primary"
-        onClick={() => findWork() && setShouldShowTemplate(true)}
+        onClick={async () => {
+          await findWork();
+          setShouldShowTemplate(true);
+        }}
         variant="contained"
       >
         find work
