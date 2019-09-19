@@ -91,7 +91,7 @@ export class ContentParser {
     // };
   }
 
-  private parseImport(): Import {
+  private parseImport(): Import | Text {
     this.moveToNextChar(); // eats $
 
     let pointerIndex = "";
@@ -99,6 +99,13 @@ export class ContentParser {
     while (!this.isAtEnd() && !this.isImportEnd(this.getCurChar())) {
       pointerIndex += this.getCurChar();
       this.moveToNextChar();
+    }
+
+    if (!this.availablePointers[Number(pointerIndex) - 1]) {
+      return {
+        contentType: "TEXT" as "TEXT",
+        text: `$${pointerIndex}`,
+      };
     }
 
     return {
