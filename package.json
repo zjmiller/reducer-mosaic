@@ -1,0 +1,18 @@
+{
+  "name": "zak-mosaic",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Zachary Miller <zachary.john.miller@gmail.com>",
+  "license": "MIT",
+  "cacheDirectories": [
+    "client/node_modules",
+    "server/node_modules"
+  ],
+  "scripts": {
+    "heroku-prebuild": "cd client && yarn && yarn run build && cd ../server && yarn"
+  },
+  "engines": {
+    "node": "12.2.0",
+    "yarn": "1.13.0"
+  }
+}
