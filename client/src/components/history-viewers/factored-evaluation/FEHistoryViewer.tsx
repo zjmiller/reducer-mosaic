@@ -40,12 +40,24 @@ const FEHistoryViewerContainer: React.FC<{
   runId: string | null;
   refetchAllRuns: () => void;
 }> = ({ runId, refetchAllRuns }) => {
+  const [hasManuallySetHistoryIndex, setHasManuallySetHistoryIndex] = useState(
+    false
+  );
+
   const [historyIndex, setHistoryIndex] = useState(0);
 
   const { data, error } = useQuery(GET_RUN, {
     pollInterval: 1000,
     variables: { id: runId, index: historyIndex }
   });
+
+  if (
+    data &&
+    !hasManuallySetHistoryIndex &&
+    data.run.history.actions.length !== historyIndex
+  ) {
+    setHistoryIndex(data.run.history.actions.length);
+  }
 
   const [copyRun] = useMutation(COPY_RUN, {
     variables: { runId: runId, index: historyIndex }
@@ -67,7 +79,10 @@ const FEHistoryViewerContainer: React.FC<{
       <div>
         <Button
           disabled={historyIndex < 1}
-          onClick={() => setHistoryIndex(historyIndex - 1)}
+          onClick={() => {
+            setHistoryIndex(historyIndex - 1);
+            setHasManuallySetHistoryIndex(true);
+          }}
           variant="contained"
         >
           back
@@ -84,7 +99,10 @@ const FEHistoryViewerContainer: React.FC<{
         </span>
         <Button
           disabled={data && historyIndex === data.run.history.actions.length}
-          onClick={() => setHistoryIndex(historyIndex + 1)}
+          onClick={() => {
+            setHistoryIndex(historyIndex + 1);
+            setHasManuallySetHistoryIndex(true);
+          }}
           variant="contained"
         >
           forward
