@@ -5,3 +5,5 @@ Rapidly built Mosaic prototype illustrating a reducer-based approach. Implements
 Check out the directory structure of [server/src](server/src) to get a feel for the main abstractions. Obviously the run/script/interaction terminology comes from Mosaic2. As a side note, in this new context, the term "script" makes less sense and should maybe be replaced.
 
 Many particular abstraction details are orthogonal to the reducer debate. In fact, the `IScript` interface in [server/src/script/index.ts](server/src/script/index.ts) doesn't even require a reducer-based implementation.
+
+You can find the FE reducer [here](server/src/script-registry/factored-evaluation-script/index.ts).
