@@ -59,13 +59,11 @@ export class FactoredEvaluationScript implements IScript {
   constructor({
     rootLevelQuestion,
     experts,
-    state,
     history,
     randomSeedString,
   }: {
     rootLevelQuestion?: string;
     experts?: ExpertAssignments;
-    state?: FactoredEvaluationScriptState;
     history?: FactoredEvaluationScriptHistory;
     randomSeedString?: string;
   } = {}) {
@@ -88,8 +86,9 @@ export class FactoredEvaluationScript implements IScript {
     };
 
     this.state =
-      state ||
+      // is user supplied history, use it to compute current state
       (history && this.getPastStateAtIndex(history.actions.length, false)) ||
+      // otherwise state is set to initial state
       this.history.initialState;
 
     deepFreeze(this.state); // enforce immutability
