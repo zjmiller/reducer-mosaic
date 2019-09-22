@@ -1,5 +1,7 @@
 import { Content } from "./Content";
 
+export type ExportId = string;
+
 export type Export = {
   exportId: string;
   contentType: "EXPORT";

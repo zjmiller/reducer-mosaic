@@ -1,11 +1,12 @@
 import { Content } from "../../content/content";
 import { Interaction } from "../../interaction";
 
-interface Workspace extends Interaction {
+export interface Workspace extends Interaction {
   id: string;
   isActive: boolean;
   assignedTo: string | null;
   containsExports: string[];
+  workspaceType: string;
 }
 
 export interface JudgeWorkspace extends Workspace {

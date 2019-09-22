@@ -1,7 +1,11 @@
+import { getAccessibleContentsOfWorkspace } from "./helpers/getAccessibleContentsOfWorkspace";
+import { getMaybeAnswerContentOfSubQuestion } from "./helpers/getMaybeAnswerContentOfSubQuestion";
 import { FactoredEvaluationScriptState } from "./index";
 import { FactoredEvaluationWorkspace } from "./workspace";
 
 import { Content } from "../../content/content";
+import { getAccessibleExportIds } from "../../content/helpers/getAccessibleExportIds";
+
 import {
   ExportMaybeWithContent,
   ExportWithContent,
@@ -123,52 +127,7 @@ export const generateTemplate = (
   const subQuestions = state.honestWorkspaces
     .filter(w => w.judgeParentId === workspace.id)
     .map(honest => {
-      const honestAnswerCandidate = honest.answerCandidate;
-
-      if (!honestAnswerCandidate) {
-        return {
-          question: honest.question,
-          answer: null,
-        };
-      }
-
-      const malicious = state.maliciousWorkspaces.find(
-        w => w.judgeParentId === honest.judgeParentId,
-      );
-
-      if (!malicious) {
-        return {
-          question: honest.question,
-          answer: null,
-        };
-      }
-
-      const didMaliciousDeclineToChallenge = malicious.didDeclineToChallenge;
-
-      if (didMaliciousDeclineToChallenge) {
-        return {
-          question: honest.question,
-          answer: honest.answerCandidate,
-        };
-      }
-
-      const judge = state.judgeWorkspaces.find(
-        w => w.parentId === honest.judgeParentId,
-      );
-
-      if (!judge) {
-        throw Error("Todo: shouldn't happen.");
-      }
-
-      const didSelectFirstAnswerCandidate = judge.answerCandidateSelected === 1;
-
-      const didSelectHonestAnswerCandidate =
-        (didSelectFirstAnswerCandidate && judge.shouldShowHonestFirst) ||
-        (!didSelectFirstAnswerCandidate && !judge.shouldShowHonestFirst);
-
-      const answer = didSelectHonestAnswerCandidate
-        ? honest.answerCandidate
-        : malicious.answerCandidate;
+      const answer = getMaybeAnswerContentOfSubQuestion(honest, state);
 
       return {
         question: honest.question,
@@ -176,16 +135,38 @@ export const generateTemplate = (
       };
     });
 
-  const availableExports = state.availableExports.map(e => ({
-    // Only send export content if either the workspace introduced the export
-    // or a judge has unlocked the export.
-    content:
-      workspace.containsExports.includes(e.exportId) ||
-      workspace.unlockedExports.includes(e.exportId)
-        ? e.content
-        : undefined,
-    exportId: e.exportId,
-  }));
+  const accessibleContentsOfWorkspace = getAccessibleContentsOfWorkspace(
+    workspace,
+    state,
+  );
+
+  const accessibleExportIds: string[] = [];
+  accessibleContentsOfWorkspace.forEach(content => {
+    accessibleExportIds.push(
+      ...getAccessibleExportIds(
+        content,
+        workspace.containsExports,
+        workspace.unlockedExports,
+        state.availableExports,
+      ),
+    );
+  });
+
+  const availableExports = accessibleExportIds.map(exportId => {
+    const exportWithContent = state.availableExports.find(
+      e => e.exportId === exportId,
+    );
+    return {
+      // Only send export content if either the workspace introduced the export
+      // or a judge has unlocked the export.
+      content:
+        workspace.containsExports.includes(exportId) ||
+        workspace.unlockedExports.includes(exportId)
+          ? exportWithContent && exportWithContent.content
+          : undefined,
+      exportId,
+    };
+  });
 
   return {
     templateIdentifier: JUDGE_WORKSPACE_TEMPLATE,
