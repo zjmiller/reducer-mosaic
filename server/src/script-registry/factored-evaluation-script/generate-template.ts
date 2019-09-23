@@ -1,10 +1,10 @@
-import { getAccessibleContentsOfWorkspace } from "./helpers/getAccessibleContentsOfWorkspace";
-import { getMaybeAnswerContentOfSubQuestion } from "./helpers/getMaybeAnswerContentOfSubQuestion";
+import { getAccessibleContentsOfWorkspace } from "./helpers/get-accessible-contents-of-workspace";
+import { getMaybeAnswerContentOfSubQuestion } from "./helpers/get-maybe-answer-content-of-sub-question";
 import { FactoredEvaluationScriptState } from "./index";
 import { FactoredEvaluationWorkspace } from "./workspace";
 
 import { Content } from "../../content/content";
-import { getAccessibleExportIds } from "../../content/helpers/getAccessibleExportIds";
+import { getAccessibleExportIds } from "../../content/helpers/get-accessible-export-ids";
 
 import {
   ExportMaybeWithContent,

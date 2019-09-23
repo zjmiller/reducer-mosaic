@@ -1,4 +1,4 @@
-import { getMaybeAnswerContentOfSubQuestion } from "./getMaybeAnswerContentOfSubQuestion";
+import { getMaybeAnswerContentOfSubQuestion } from "./get-maybe-answer-content-of-sub-question";
 
 import { FactoredEvaluationScriptState } from "../index";
 import {
