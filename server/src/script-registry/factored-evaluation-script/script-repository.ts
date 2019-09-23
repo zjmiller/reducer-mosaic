@@ -1,22 +1,20 @@
-import { Script as ScriptModel } from "../../db/models/script";
-import { FactoredEvaluationAction } from "./actions";
 import { getInitialState } from "./get-initial-state";
-import { createSeededRandomIdGenerator } from "../helpers/create-seeded-random-id-generator";
+
 import {
   Experts,
   FactoredEvaluationScript,
   FactoredEvaluationScriptHistory,
 } from "./index";
 
+import { createSeededRandomIdGenerator } from "../helpers/create-seeded-random-id-generator";
+
+import { Script as ScriptModel } from "../../db/models/script";
+
 export class ScriptDAO {
   constructor(private modelInstance: ScriptModel) {}
 
-  public async saveActionToDb(action: FactoredEvaluationAction) {
-    const actions = this.modelInstance.actions;
-
-    await this.modelInstance.update({
-      actions: actions.concat(action),
-    });
+  public async save() {
+    await this.modelInstance.save();
   }
 }
 

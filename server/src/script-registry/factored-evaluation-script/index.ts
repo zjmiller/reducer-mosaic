@@ -82,10 +82,7 @@ export class FactoredEvaluationScript implements IScript {
     this.scriptDAO = scriptDAO;
 
     this.state =
-      // is user supplied history, use it to compute current state
-      (history && this.getPastStateAtIndex(history.actions.length, false)) ||
-      // otherwise state is set to initial state
-      this.history.initialState;
+      history && this.getPastStateAtIndex(history.actions.length, false);
 
     deepFreeze(this.state); // enforce immutability
 
@@ -209,7 +206,7 @@ export class FactoredEvaluationScript implements IScript {
 
     // record action in script history
     this.history.actions.push(action);
-    this.scriptDAO.saveActionToDb(action);
+    this.scriptDAO.save();
   }
 
   public assignUserToInteraction({
@@ -237,7 +234,7 @@ export class FactoredEvaluationScript implements IScript {
 
     // record action in script history
     this.history.actions.push(action);
-    this.scriptDAO.saveActionToDb(action);
+    this.scriptDAO.save();
 
     const updatedWorkspace = this.getAllWorkspaces().find(
       w => w.id === interaction.id,
@@ -275,7 +272,7 @@ export class FactoredEvaluationScript implements IScript {
 
     // record action in script history
     this.history.actions.push(action);
-    this.scriptDAO.saveActionToDb(action);
+    this.scriptDAO.save();
   }
 
   public processAdminAction(action: any) {
@@ -283,7 +280,7 @@ export class FactoredEvaluationScript implements IScript {
 
     // record action in script history
     this.history.actions.push(action);
-    this.scriptDAO.saveActionToDb(action);
+    this.scriptDAO.save();
   }
 
   private reducer(
