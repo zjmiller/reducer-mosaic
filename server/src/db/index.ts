@@ -1,6 +1,7 @@
 import { Sequelize } from "sequelize-typescript";
 import sqlite3 from "sqlite3";
 
+import { Run } from "./models/run";
 import { Script } from "./models/script";
 import { User } from "./models/user";
 
@@ -16,7 +17,8 @@ export async function ensureDbInitialized() {
 }
 
 export async function setupDBTables() {
-  await sequelize.addModels([Script, User]);
-  await User.sync();
+  await sequelize.addModels([Run, Script, User]);
   await Script.sync();
+  await Run.sync();
+  await User.sync();
 }

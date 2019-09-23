@@ -7,6 +7,8 @@ import { Template } from "../template-info";
 import { User } from "../user";
 
 export interface IScript {
+  id: string;
+
   getAllInteractions(): Interaction[];
 
   getAlreadyAssignedInteractionForUser(user: User): MaybeInteraction;

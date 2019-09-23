@@ -19,7 +19,7 @@ async function main(): Promise<undefined> {
     });
   }
 
-  createFactoredEvaluationRun();
+  await createFactoredEvaluationRun();
 
   startServer(topLevelScheduler);
 

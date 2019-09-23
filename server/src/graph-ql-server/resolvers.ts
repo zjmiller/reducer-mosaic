@@ -17,11 +17,11 @@ export const createResolvers = (topLevelScheduler: TopLevelScheduler): any => ({
       root: any,
       { runId, index }: { runId: string; index: number },
     ) => {
-      const run = RunRepository.findRunByPk(runId);
+      const run = await RunRepository.findRunByPk(runId);
       if (!run) {
         throw Error("Run not found.");
       }
-      return !!run.createCopy({ scriptHistoryIndex: index });
+      return !!(await run.createCopy({ scriptHistoryIndex: index }));
     },
 
     findWorkForUser: async (root: any, { userId }: { userId: string }) => {
@@ -54,7 +54,7 @@ export const createResolvers = (topLevelScheduler: TopLevelScheduler): any => ({
       root: any,
       { runId, action }: { runId: string; action: any },
     ) => {
-      const run = RunRepository.findRunByPk(runId);
+      const run = await RunRepository.findRunByPk(runId);
       if (!run) {
         throw Error("Run not found.");
       }
@@ -64,8 +64,8 @@ export const createResolvers = (topLevelScheduler: TopLevelScheduler): any => ({
   },
 
   Query: {
-    run: (root: any, { id }: { id: string }) => {
-      const run = RunRepository.findRunByPk(id);
+    run: async (root: any, { id }: { id: string }) => {
+      const run = await RunRepository.findRunByPk(id);
       if (!run) {
         throw Error("Run not found.");
       }

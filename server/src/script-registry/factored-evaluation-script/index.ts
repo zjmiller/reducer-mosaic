@@ -206,7 +206,7 @@ export class FactoredEvaluationScript implements IScript {
 
     // record action in script history
     this.history.actions.push(action);
-    this.scriptDAO.save();
+    this.scriptDAO.saveActionToDb();
   }
 
   public assignUserToInteraction({
@@ -234,7 +234,7 @@ export class FactoredEvaluationScript implements IScript {
 
     // record action in script history
     this.history.actions.push(action);
-    this.scriptDAO.save();
+    this.scriptDAO.saveActionToDb();
 
     const updatedWorkspace = this.getAllWorkspaces().find(
       w => w.id === interaction.id,
@@ -272,7 +272,7 @@ export class FactoredEvaluationScript implements IScript {
 
     // record action in script history
     this.history.actions.push(action);
-    this.scriptDAO.save();
+    this.scriptDAO.saveActionToDb();
   }
 
   public processAdminAction(action: any) {
@@ -280,7 +280,7 @@ export class FactoredEvaluationScript implements IScript {
 
     // record action in script history
     this.history.actions.push(action);
-    this.scriptDAO.save();
+    this.scriptDAO.saveActionToDb();
   }
 
   private reducer(

@@ -13,8 +13,8 @@ import { Script as ScriptModel } from "../../db/models/script";
 export class ScriptDAO {
   constructor(private modelInstance: ScriptModel) {}
 
-  public async save() {
-    await this.modelInstance.save();
+  public async saveActionToDb() {
+    await this.modelInstance.update({ actions: this.modelInstance.actions });
   }
 }
 

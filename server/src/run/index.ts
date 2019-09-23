@@ -1,8 +1,4 @@
-// tslint:disable-next-line:no-var-requires
-const uuidv4 = require("uuid/v4");
-
 import { RunRepository } from "./run-repository";
-
 import { Interaction } from "../interaction";
 import { Reply } from "../reply";
 import { IRunLevelScheduler } from "../run-level-scheduler";
@@ -10,16 +6,11 @@ import { IScript } from "../script";
 import { User } from "../user";
 
 export class Run {
-  public id: string;
-
   constructor(
+    public id: string,
     public script: IScript,
     private runLevelScheduler: IRunLevelScheduler,
-  ) {
-    this.id = uuidv4();
-    RunRepository.addRunToInMemoryCollection(this);
-    console.log(`Created run with id ${this.id}`);
-  }
+  ) {}
 
   public getEligibleInteractionsForUser(user: User) {
     return this.runLevelScheduler.getEligibleInteractionsForUser(user);
@@ -66,7 +57,7 @@ export class Run {
       shouldCopyOverRunLevelSchedulerState,
     );
 
-    return new Run(newScript, newRunLevelScheduler);
+    return await RunRepository.create(newScript, newRunLevelScheduler);
   }
 
   public async createCopyWithNewRunLevelScheduler({
@@ -78,7 +69,7 @@ export class Run {
   }) {
     const newScript = await this.script.createCopy(scriptHistoryIndex);
 
-    return new Run(newScript, runLevelScheduler);
+    return await RunRepository.create(newScript, runLevelScheduler);
   }
 
   public processReply({

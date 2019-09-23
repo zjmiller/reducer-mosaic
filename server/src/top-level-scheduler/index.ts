@@ -5,6 +5,10 @@ import { MaybeTemplate } from "../template-info";
 import { User } from "../user";
 
 export class TopLevelScheduler {
+  constructor() {
+    RunRepository.loadAll();
+  }
+
   public findWorkForUser(user: User): MaybeTemplate {
     let interaction: Interaction;
     let isInteractionAlreadyAssigned: boolean;
