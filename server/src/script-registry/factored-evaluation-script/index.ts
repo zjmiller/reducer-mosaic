@@ -89,7 +89,10 @@ export class FactoredEvaluationScript implements IScript {
 
     deepFreeze(this.state); // enforce immutability
 
-    this.setupRun();
+    // If this run is starting from a blank slate, dispatch setup action
+    if (history.actions.length === 0) {
+      this.setupRun();
+    }
   }
 
   public getEligibleInteractionsForUser(user: User) {
