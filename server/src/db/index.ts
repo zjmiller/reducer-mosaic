@@ -16,9 +16,11 @@ export async function ensureDbInitialized() {
   await sequelize.authenticate();
 }
 
-export async function setupDBTables() {
+export async function setupDBTables(
+  { force }: { force: boolean } = { force: false },
+) {
   await sequelize.addModels([Run, Script, User]);
-  await Script.sync();
-  await Run.sync();
-  await User.sync();
+  await Run.sync({ force });
+  await Script.sync({ force });
+  await User.sync({ force });
 }

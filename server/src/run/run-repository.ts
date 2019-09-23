@@ -33,6 +33,9 @@ export const RunRepository = {
     }
 
     const script = await ScriptRepository.findByPk(runModelInstance.scriptId);
+    if (!script) {
+      throw Error("Script associated with run not found.");
+    }
 
     const run = new Run(
       runModelInstance.id,

@@ -18,6 +18,12 @@ export class Script extends Model<Script> {
   public randomSeedString: string;
 
   @Column({
+    type: Sequelize.STRING,
+    allowNull: false,
+  })
+  public scriptType: string;
+
+  @Column({
     type: Sequelize.JSON,
     allowNull: false,
   })

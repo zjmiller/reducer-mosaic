@@ -52,6 +52,7 @@ export const FactoredEvaluationScriptRepository = {
 
     const scriptModel = await ScriptModel.create({
       randomSeedString,
+      scriptType: "FACTORED_EVALUATION",
       initialState: history.initialState,
       actions: history.actions,
     });
