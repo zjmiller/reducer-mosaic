@@ -4,11 +4,11 @@ import { startServer } from "./graph-ql-server";
 import { TopLevelScheduler } from "./top-level-scheduler";
 import { UserRepository } from "./user/user-repository";
 
-const topLevelScheduler = new TopLevelScheduler();
-
 async function main(): Promise<undefined> {
   await ensureDbInitialized();
   await setupDBTables();
+
+  const topLevelScheduler = new TopLevelScheduler();
 
   // create guest user if it's not in db
   try {

@@ -4,7 +4,7 @@ import { Run as RunModel } from "../db/models/run";
 import { IRunLevelScheduler } from "../run-level-scheduler";
 import { TrivialRunLevelScheduler } from "../run-level-scheduler-registry/trivial-run-level-scheduler";
 import { IScript } from "../script";
-import { FactoredEvaluationScriptRepository } from "../script-registry/factored-evaluation-script/script-repository";
+import { ScriptRepository } from "../script/script-repository";
 
 const runs: Run[] = [];
 
@@ -32,9 +32,7 @@ export const RunRepository = {
       throw Error("Run not found");
     }
 
-    const script = await FactoredEvaluationScriptRepository.findByPk(
-      runModelInstance.scriptId,
-    );
+    const script = await ScriptRepository.findByPk(runModelInstance.scriptId);
 
     const run = new Run(
       runModelInstance.id,
