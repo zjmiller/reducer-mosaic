@@ -53,14 +53,14 @@ export class Run {
     return this.runLevelScheduler.getState();
   }
 
-  public createCopy({
+  public async createCopy({
     scriptHistoryIndex,
     shouldCopyOverRunLevelSchedulerState,
   }: {
     scriptHistoryIndex: number;
     shouldCopyOverRunLevelSchedulerState?: boolean;
   }) {
-    const newScript = this.script.createCopy(scriptHistoryIndex);
+    const newScript = await this.script.createCopy(scriptHistoryIndex);
     const newRunLevelScheduler = this.runLevelScheduler.createCopy(
       newScript,
       shouldCopyOverRunLevelSchedulerState,
@@ -69,14 +69,14 @@ export class Run {
     return new Run(newScript, newRunLevelScheduler);
   }
 
-  public createCopyWithNewRunLevelScheduler({
+  public async createCopyWithNewRunLevelScheduler({
     runLevelScheduler,
     scriptHistoryIndex,
   }: {
     runLevelScheduler: IRunLevelScheduler;
     scriptHistoryIndex: number;
   }) {
-    const newScript = this.script.createCopy(scriptHistoryIndex);
+    const newScript = await this.script.createCopy(scriptHistoryIndex);
 
     return new Run(newScript, runLevelScheduler);
   }

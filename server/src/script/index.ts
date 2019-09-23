@@ -21,7 +21,7 @@ export interface IScript {
 
   getPastStateAtIndex(i: number): ScriptState;
 
-  createCopy(i?: number): IScript;
+  createCopy(i?: number): Promise<IScript>;
 
   assignUserToInteraction({
     interaction,

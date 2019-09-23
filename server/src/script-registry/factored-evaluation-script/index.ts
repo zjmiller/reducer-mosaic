@@ -1,13 +1,17 @@
 import deepFreeze from "deep-freeze";
 
 import { FactoredEvaluationAction } from "./actions";
-import { generateInitialState } from "./generate-initial-state";
+import { getInitialState } from "./get-initial-state";
 import {
   FactoredEvaluationWorkspaceTemplate,
   generateTemplate,
 } from "./generate-template";
 import { FactoredEvaluationReply } from "./reply";
 import { rootReducer } from "./root-reducer";
+import {
+  FactoredEvaluationScriptRepository,
+  ScriptDAO,
+} from "./script-repository";
 import {
   JudgeWorkspace,
   HonestWorkspace,
@@ -22,7 +26,7 @@ import { Interaction } from "../../interaction";
 import { IScript } from "../../script";
 import { User } from "../../user";
 
-export type ExpertAssignments = {
+export type Experts = {
   honest: string[];
   malicious: string[];
 };
@@ -31,7 +35,7 @@ export type FactoredEvaluationScriptState = {
   judgeWorkspaces: JudgeWorkspace[];
   honestWorkspaces: HonestWorkspace[];
   maliciousWorkspaces: MaliciousWorkspace[];
-  experts: ExpertAssignments;
+  experts: Experts;
   availableExports: ExportWithContent[];
 };
 
@@ -41,49 +45,41 @@ export type FactoredEvaluationScriptHistory = {
 };
 
 export class FactoredEvaluationScript implements IScript {
+  public id: string;
   private state: FactoredEvaluationScriptState;
   private history: FactoredEvaluationScriptHistory;
   private prngId: () => string; // pseudo-random uuid generator
   private randomSeedString: string; // used to make prngId above
 
-  private defaultRootLevelQuestion =
-    "This is the default content for a factored evaluation root-level question";
   private rootLevelQuestion: string;
 
-  private defaultInitialExperts = {
-    honest: [],
-    malicious: [],
-  };
-  private initialExperts: ExpertAssignments;
+  private initialExperts: Experts;
+  private scriptDAO: ScriptDAO;
 
   constructor({
+    id,
     rootLevelQuestion,
     experts,
     history,
     randomSeedString,
+    prngId,
+    scriptDAO,
   }: {
-    rootLevelQuestion?: string;
-    experts?: ExpertAssignments;
-    history?: FactoredEvaluationScriptHistory;
-    randomSeedString?: string;
-  } = {}) {
-    this.randomSeedString = randomSeedString || String(Date.now());
-    this.prngId = createSeededRandomIdGenerator(this.randomSeedString);
-
-    this.rootLevelQuestion = rootLevelQuestion
-      ? rootLevelQuestion
-      : this.defaultRootLevelQuestion;
-
-    this.initialExperts = experts ? experts : this.defaultInitialExperts;
-
-    this.history = history || {
-      actions: [],
-      initialState: generateInitialState({
-        initialExperts: this.initialExperts,
-        prngId: this.prngId,
-        rootLevelQuestion: this.rootLevelQuestion,
-      }),
-    };
+    id: string;
+    rootLevelQuestion: string;
+    experts: Experts;
+    history: FactoredEvaluationScriptHistory;
+    randomSeedString: string;
+    prngId: () => string;
+    scriptDAO: ScriptDAO;
+  }) {
+    this.id = id;
+    this.rootLevelQuestion = rootLevelQuestion;
+    this.initialExperts = experts;
+    this.history = history;
+    this.randomSeedString = randomSeedString;
+    this.prngId = prngId;
+    this.scriptDAO = scriptDAO;
 
     this.state =
       // is user supplied history, use it to compute current state
@@ -92,6 +88,8 @@ export class FactoredEvaluationScript implements IScript {
       this.history.initialState;
 
     deepFreeze(this.state); // enforce immutability
+
+    this.setupRun();
   }
 
   public getEligibleInteractionsForUser(user: User) {
@@ -163,11 +161,7 @@ export class FactoredEvaluationScript implements IScript {
       ? createSeededRandomIdGenerator(this.randomSeedString)
       : this.prngId;
 
-    let pastState: FactoredEvaluationScriptState = generateInitialState({
-      initialExperts: this.initialExperts,
-      prngId: localRngUUID,
-      rootLevelQuestion: this.rootLevelQuestion,
-    });
+    let pastState: FactoredEvaluationScriptState = getInitialState();
 
     for (let j = 0; j < i; j++) {
       pastState = this.reducer(
@@ -180,13 +174,13 @@ export class FactoredEvaluationScript implements IScript {
     return pastState;
   }
 
-  public createCopy(i?: number) {
+  public async createCopy(i?: number) {
     const copyHistory =
       i !== undefined
         ? { ...this.history, actions: this.history.actions.slice(0, i) }
         : this.history;
 
-    const newScript = new FactoredEvaluationScript({
+    const newScript = await FactoredEvaluationScriptRepository.create({
       history: copyHistory,
       randomSeedString: this.randomSeedString,
       experts: this.initialExperts,
@@ -199,6 +193,20 @@ export class FactoredEvaluationScript implements IScript {
     workspace: FactoredEvaluationWorkspace,
   ): FactoredEvaluationWorkspaceTemplate {
     return generateTemplate(workspace, this.state);
+  }
+
+  private setupRun(): void {
+    const action = {
+      actionType: "SETUP_RUN" as "SETUP_RUN",
+      rootLevelQuestion: this.rootLevelQuestion,
+      experts: this.initialExperts,
+    };
+
+    this.state = this.reducer(this.state, action, this.prngId);
+
+    // record action in script history
+    this.history.actions.push(action);
+    this.scriptDAO.saveActionToDb(action);
   }
 
   public assignUserToInteraction({
@@ -222,9 +230,11 @@ export class FactoredEvaluationScript implements IScript {
       userId: user.id,
     };
 
+    this.state = this.reducer(this.state, action, this.prngId);
+
     // record action in script history
     this.history.actions.push(action);
-    this.state = this.reducer(this.state, action, this.prngId);
+    this.scriptDAO.saveActionToDb(action);
 
     const updatedWorkspace = this.getAllWorkspaces().find(
       w => w.id === interaction.id,
@@ -258,15 +268,19 @@ export class FactoredEvaluationScript implements IScript {
       reply,
     };
 
+    this.state = this.reducer(this.state, action, this.prngId);
+
     // record action in script history
     this.history.actions.push(action);
-    this.state = this.reducer(this.state, action, this.prngId);
+    this.scriptDAO.saveActionToDb(action);
   }
 
   public processAdminAction(action: any) {
+    this.state = this.reducer(this.state, action, this.prngId);
+
     // record action in script history
     this.history.actions.push(action);
-    this.state = this.reducer(this.state, action, this.prngId);
+    this.scriptDAO.saveActionToDb(action);
   }
 
   private reducer(
@@ -275,6 +289,7 @@ export class FactoredEvaluationScript implements IScript {
     rngUUID: () => string,
   ): FactoredEvaluationScriptState {
     const newState = rootReducer(state, action, rngUUID);
+
     deepFreeze(newState); // enforce immutability
     return newState;
   }

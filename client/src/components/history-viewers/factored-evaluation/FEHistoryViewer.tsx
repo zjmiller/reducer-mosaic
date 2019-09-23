@@ -47,7 +47,6 @@ const FEHistoryViewerContainer: React.FC<{
   const [historyIndex, setHistoryIndex] = useState(0);
 
   const { data, error } = useQuery(GET_RUN, {
-    pollInterval: 1000,
     variables: { id: runId, index: historyIndex }
   });
 
@@ -185,11 +184,15 @@ const FEHistoryViewerPresentational: React.FC<FEHistoryViewerProps> = ({
         </div>
       )}
       <strong>run state</strong>
-      <FEHonestWorkspaceViewer
-        workspace={rootHonestWorkspace}
-        availableExports={availableExports}
-        runState={data.run.pastState}
-      />
+      {rootHonestWorkspace ? (
+        <FEHonestWorkspaceViewer
+          workspace={rootHonestWorkspace}
+          availableExports={availableExports}
+          runState={data.run.pastState}
+        />
+      ) : (
+        <div>Initial blank state: awaiting setup action</div>
+      )}
     </div>
   );
 };

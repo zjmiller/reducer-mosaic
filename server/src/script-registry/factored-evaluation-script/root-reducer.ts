@@ -5,6 +5,7 @@ import { adminReducer } from "./admin-reducer";
 import { FactoredEvaluationAction } from "./actions";
 import { convertUUIDToCoinflip } from "../helpers/convert-uuid-to-coinflip";
 import { FactoredEvaluationScriptState } from "./index";
+import { setupReducer } from "./setup-reducer";
 import { ContentParser } from "../../content/content-parser";
 import { Content } from "../../content/content";
 import { ExportWithContent } from "../../content/export";
@@ -16,6 +17,10 @@ export const rootReducer = (
 ): FactoredEvaluationScriptState => {
   // Enforce immutability.
   deepFreeze(state);
+
+  if (action.actionType === "SETUP_RUN") {
+    return setupReducer(state, action, prngId);
+  }
 
   // Pass admin actions off to admin reducer.
   if (action.actionType === "_ADMIN_UN_ASSIGN_ALL") {

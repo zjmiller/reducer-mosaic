@@ -1,8 +1,10 @@
 import { Content } from "../../content/content";
 import { Interaction } from "../../interaction";
 
+export type WorkspaceId = string;
+
 export interface Workspace extends Interaction {
-  id: string;
+  id: WorkspaceId;
   isActive: boolean;
   assignedTo: string | null;
   containsExports: string[];
@@ -11,7 +13,7 @@ export interface Workspace extends Interaction {
 
 export interface JudgeWorkspace extends Workspace {
   workspaceType: "JUDGE";
-  parentId: string | null; // two below root-level
+  parentId: WorkspaceId | null; // two below root-level
   question: Content;
   answerCandidateSelected: number | null;
   shouldShowHonestFirst: boolean | null;
@@ -20,14 +22,14 @@ export interface JudgeWorkspace extends Workspace {
 
 export interface HonestWorkspace extends Workspace {
   workspaceType: "HONEST";
-  judgeParentId: string | null; // root-level is null
+  judgeParentId: WorkspaceId | null; // root-level is null
   question: Content;
   answerCandidate: Content | null;
 }
 
 export interface MaliciousWorkspace extends Workspace {
   workspaceType: "MALICIOUS";
-  judgeParentId: string | null; // one below root-level
+  judgeParentId: WorkspaceId | null; // one below root-level
   question: Content;
   answerCandidate: Content | null;
   didDeclineToChallenge: boolean | null;
