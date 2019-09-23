@@ -19,7 +19,7 @@ import {
   FactoredEvaluationWorkspace,
 } from "./workspace";
 
-import { createSeededRandomIdGenerator } from "../helpers/create-seeded-random-id-generator";
+import { CopyablePrngId } from "../helpers/create-seeded-random-id-generator";
 
 import { ExportWithContent } from "../../content/export";
 import { Interaction } from "../../interaction";
@@ -48,7 +48,7 @@ export class FactoredEvaluationScript implements IScript {
   public id: string;
   private state: FactoredEvaluationScriptState;
   private history: FactoredEvaluationScriptHistory;
-  private prngId: () => string; // pseudo-random uuid generator
+  private prngId: CopyablePrngId; // pseudo-random uuid generator
   private randomSeedString: string; // used to make prngId above
 
   private rootLevelQuestion: string;
@@ -70,7 +70,7 @@ export class FactoredEvaluationScript implements IScript {
     experts: Experts;
     history: FactoredEvaluationScriptHistory;
     randomSeedString: string;
-    prngId: () => string;
+    prngId: CopyablePrngId;
     scriptDAO: ScriptDAO;
   }) {
     this.id = id;
@@ -161,7 +161,7 @@ export class FactoredEvaluationScript implements IScript {
     // this creates a pseudo-random uuid generator with the same seed
     // as the one usually used
     const localRngUUID = shouldUseLocalRng
-      ? createSeededRandomIdGenerator(this.randomSeedString)
+      ? this.prngId.createFreshCopy()
       : this.prngId;
 
     let pastState: FactoredEvaluationScriptState = getInitialState();
