@@ -12,4 +12,6 @@ export const getInitialState = () => ({
   honestWorkspaces: [] as HonestWorkspace[],
   judgeWorkspaces: [] as JudgeWorkspace[],
   maliciousWorkspaces: [] as MaliciousWorkspace[],
+  ids: [] as string[],
+  randomSeedString: "",
 });

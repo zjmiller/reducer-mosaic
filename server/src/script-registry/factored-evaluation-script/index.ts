@@ -19,8 +19,6 @@ import {
   FactoredEvaluationWorkspace,
 } from "./workspace";
 
-import { CopyablePrngId } from "../helpers/create-seeded-random-id-generator";
-
 import { ExportWithContent } from "../../content/export";
 import { Interaction } from "../../interaction";
 import { IScript } from "../../script";
@@ -37,6 +35,8 @@ export type FactoredEvaluationScriptState = {
   maliciousWorkspaces: MaliciousWorkspace[];
   experts: Experts;
   availableExports: ExportWithContent[];
+  ids: string[];
+  randomSeedString: string;
 };
 
 export type FactoredEvaluationScriptHistory = {
@@ -48,8 +48,7 @@ export class FactoredEvaluationScript implements IScript {
   public id: string;
   private state: FactoredEvaluationScriptState;
   private history: FactoredEvaluationScriptHistory;
-  private prngId: CopyablePrngId; // pseudo-random uuid generator
-  private randomSeedString: string; // used to make prngId above
+  private randomSeedString: string; // used to make ensure deterministic id generation in reducer
 
   private rootLevelQuestion: string;
 
@@ -62,7 +61,6 @@ export class FactoredEvaluationScript implements IScript {
     experts,
     history,
     randomSeedString,
-    prngId,
     scriptDAO,
   }: {
     id: string;
@@ -70,7 +68,6 @@ export class FactoredEvaluationScript implements IScript {
     experts: Experts;
     history: FactoredEvaluationScriptHistory;
     randomSeedString: string;
-    prngId: CopyablePrngId;
     scriptDAO: ScriptDAO;
   }) {
     this.id = id;
@@ -78,7 +75,6 @@ export class FactoredEvaluationScript implements IScript {
     this.initialExperts = experts;
     this.history = history;
     this.randomSeedString = randomSeedString;
-    this.prngId = prngId;
     this.scriptDAO = scriptDAO;
 
     this.state =
@@ -155,20 +151,10 @@ export class FactoredEvaluationScript implements IScript {
       i = this.history.actions.length;
     }
 
-    // this creates a pseudo-random uuid generator with the same seed
-    // as the one usually used
-    const localRngUUID = shouldUseLocalRng
-      ? this.prngId.createFreshCopy()
-      : this.prngId;
-
     let pastState: FactoredEvaluationScriptState = getInitialState();
 
     for (let j = 0; j < i; j++) {
-      pastState = this.reducer(
-        pastState,
-        this.history.actions[j],
-        localRngUUID,
-      );
+      pastState = this.reducer(pastState, this.history.actions[j]);
     }
 
     return pastState;
@@ -200,9 +186,10 @@ export class FactoredEvaluationScript implements IScript {
       actionType: "SETUP_RUN" as "SETUP_RUN",
       rootLevelQuestion: this.rootLevelQuestion,
       experts: this.initialExperts,
+      randomSeedString: this.randomSeedString,
     };
 
-    this.state = this.reducer(this.state, action, this.prngId);
+    this.state = this.reducer(this.state, action);
 
     // record action in script history
     this.history.actions.push(action);
@@ -230,7 +217,7 @@ export class FactoredEvaluationScript implements IScript {
       userId: user.id,
     };
 
-    this.state = this.reducer(this.state, action, this.prngId);
+    this.state = this.reducer(this.state, action);
 
     // record action in script history
     this.history.actions.push(action);
@@ -268,7 +255,7 @@ export class FactoredEvaluationScript implements IScript {
       reply,
     };
 
-    this.state = this.reducer(this.state, action, this.prngId);
+    this.state = this.reducer(this.state, action);
 
     // record action in script history
     this.history.actions.push(action);
@@ -276,7 +263,7 @@ export class FactoredEvaluationScript implements IScript {
   }
 
   public processAdminAction(action: any) {
-    this.state = this.reducer(this.state, action, this.prngId);
+    this.state = this.reducer(this.state, action);
 
     // record action in script history
     this.history.actions.push(action);
@@ -286,9 +273,8 @@ export class FactoredEvaluationScript implements IScript {
   private reducer(
     state: FactoredEvaluationScriptState,
     action: FactoredEvaluationAction,
-    rngUUID: () => string,
   ): FactoredEvaluationScriptState {
-    const newState = rootReducer(state, action, rngUUID);
+    const newState = rootReducer(state, action);
 
     deepFreeze(newState); // enforce immutability
     return newState;

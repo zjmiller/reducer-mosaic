@@ -6,8 +6,6 @@ import {
   FactoredEvaluationScriptHistory,
 } from "./index";
 
-import { createSeededRandomIdGenerator } from "../helpers/create-seeded-random-id-generator";
-
 import { Script as ScriptModel } from "../../db/models/script";
 
 export class ScriptDAO {
@@ -43,8 +41,6 @@ export const FactoredEvaluationScriptRepository = {
       malicious: [],
     };
 
-    const prngId = createSeededRandomIdGenerator(randomSeedString);
-
     history = history || {
       actions: [],
       initialState: getInitialState(),
@@ -65,7 +61,6 @@ export const FactoredEvaluationScriptRepository = {
       experts,
       history,
       randomSeedString,
-      prngId,
       scriptDAO,
     });
 
@@ -91,8 +86,6 @@ export const FactoredEvaluationScriptRepository = {
 
     const experts: Experts = initialState.experts;
 
-    const prngId = createSeededRandomIdGenerator(randomSeedString);
-
     const history: FactoredEvaluationScriptHistory = {
       initialState,
       actions,
@@ -106,7 +99,6 @@ export const FactoredEvaluationScriptRepository = {
       experts,
       history,
       randomSeedString,
-      prngId,
       scriptDAO,
     });
 

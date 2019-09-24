@@ -16,6 +16,7 @@ export type RunSetupAction = {
   actionType: "SETUP_RUN";
   rootLevelQuestion: string;
   experts: Experts;
+  randomSeedString: string;
 };
 
 export type ProcessReplyAction = {

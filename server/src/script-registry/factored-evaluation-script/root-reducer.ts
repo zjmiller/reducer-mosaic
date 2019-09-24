@@ -4,6 +4,7 @@ import produce from "immer";
 import { adminReducer } from "./admin-reducer";
 import { FactoredEvaluationAction } from "./actions";
 import { convertUUIDToCoinflip } from "../helpers/convert-uuid-to-coinflip";
+import { createSeededRandomIdGenerator } from "../helpers/create-seeded-random-id-generator";
 import { FactoredEvaluationScriptState } from "./index";
 import { setupReducer } from "./setup-reducer";
 import { ContentParser } from "../../content/content-parser";
@@ -13,13 +14,12 @@ import { ExportWithContent } from "../../content/export";
 export const rootReducer = (
   state: FactoredEvaluationScriptState,
   action: FactoredEvaluationAction,
-  prngId: () => string, // TODO: pass new ids in through action so reducer is pure
 ): FactoredEvaluationScriptState => {
   // Enforce immutability.
   deepFreeze(state);
 
   if (action.actionType === "SETUP_RUN") {
-    return setupReducer(state, action, prngId);
+    return setupReducer(state, action);
   }
 
   // Pass admin actions off to admin reducer.
@@ -71,6 +71,10 @@ export const rootReducer = (
           throw Error("Only a judge workspace can ask a question.");
         }
 
+        const prngId = createSeededRandomIdGenerator(
+          draftState.ids.slice(-1)[0],
+        );
+
         const [subQuestion, newExports] = parseStringAndGetNewExports({
           availableExports,
           prngId,
@@ -80,16 +84,22 @@ export const rootReducer = (
         // Keep track of which workspace created which pointers.
         workspace.containsExports.push(...newExports.map(e => e.exportId));
 
+        // Keep track of generated ids
+        draftState.ids.push(...newExports.map(e => e.exportId));
+
         // Add new pointers to the set of all pointers.
         // This is the only place where pointer content is stored.
         availableExports.push(...newExports);
+
+        const honestWorkspaceId = prngId();
+        draftState.ids.push(honestWorkspaceId);
 
         // Create honest workspace.
         const honestWorkspace = {
           answerCandidate: null,
           assignedTo: null,
           containsExports: [],
-          id: prngId(),
+          id: honestWorkspaceId,
           isActive: true,
           judgeParentId: workspace.id,
           question: subQuestion,
@@ -134,11 +144,18 @@ export const rootReducer = (
           );
         }
 
+        const prngId = createSeededRandomIdGenerator(
+          draftState.ids.slice(-1)[0],
+        );
+
         const [answerCandidate, newExports] = parseStringAndGetNewExports({
           stringToParse: reply.answerCandidate,
           availableExports,
           prngId,
         });
+
+        // Keep track of generated ids
+        draftState.ids.push(...newExports.map(e => e.exportId));
 
         // Keep track of which workspace created which pointers.
         workspace.containsExports.push(...newExports.map(e => e.exportId));
@@ -149,13 +166,16 @@ export const rootReducer = (
 
         workspace.answerCandidate = answerCandidate;
 
+        const maliciousWorkspaceId = prngId();
+        draftState.ids.push(maliciousWorkspaceId);
+
         // Create malicious workspace.
         const maliciousWorkspace = {
           answerCandidate: null,
           assignedTo: null,
           containsExports: [],
           didDeclineToChallenge: null,
-          id: prngId(),
+          id: maliciousWorkspaceId,
           isActive: true,
           judgeParentId: workspace.judgeParentId,
           question: workspace.question,
@@ -176,6 +196,10 @@ export const rootReducer = (
           );
         }
 
+        const prngId = createSeededRandomIdGenerator(
+          draftState.ids.slice(-1)[0],
+        );
+
         const [answerCandidate, newExports] = parseStringAndGetNewExports({
           availableExports,
           prngId,
@@ -185,18 +209,24 @@ export const rootReducer = (
         // Keep track of which workspace created which pointers.
         workspace.containsExports.push(...newExports.map(e => e.exportId));
 
+        // Keep track of generated ids
+        draftState.ids.push(...newExports.map(e => e.exportId));
+
         // Add new pointers to set of all pointers.
         // This is the only place where pointer content is stored.
         availableExports.push(...newExports);
 
         workspace.answerCandidate = answerCandidate;
 
+        const judgeWorkspaceId = prngId();
+        draftState.ids.push(judgeWorkspaceId);
+
         // Create judge workspace.
         const judgeWorkspace = {
           answerCandidateSelected: null,
           assignedTo: null,
           containsExports: [],
-          id: prngId(),
+          id: judgeWorkspaceId,
           isActive: true,
           parentId: workspace.judgeParentId,
           question: workspace.question,
