@@ -13,7 +13,7 @@ import { ExportWithContent } from "../../content/export";
 export const rootReducer = (
   state: FactoredEvaluationScriptState,
   action: FactoredEvaluationAction,
-  prngId: () => string, // pseudorandom id generator
+  prngId: () => string, // TODO: pass new ids in through action so reducer is pure
 ): FactoredEvaluationScriptState => {
   // Enforce immutability.
   deepFreeze(state);
