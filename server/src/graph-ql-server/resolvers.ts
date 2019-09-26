@@ -24,8 +24,11 @@ export const createResolvers = (topLevelScheduler: TopLevelScheduler): any => ({
       return !!(await run.createCopy({ scriptHistoryIndex: index }));
     },
 
-    findWorkForUser: async (root: any, { userId }: { userId: string }) => {
-      const user = await UserRepository.findUserByPk(userId);
+    findWorkForUser: async (
+      root: any,
+      { userEmail }: { userEmail: string },
+    ) => {
+      const user = await UserRepository.findUserByEmail(userEmail);
       if (!user) {
         throw Error("No user found");
       }
@@ -34,9 +37,9 @@ export const createResolvers = (topLevelScheduler: TopLevelScheduler): any => ({
 
     submitReply: async (
       root: any,
-      { reply, userId }: { reply: any; userId: string },
+      { reply, userEmail }: { reply: any; userEmail: string },
     ) => {
-      const user = await UserRepository.findUserByPk(userId);
+      const user = await UserRepository.findUserByEmail(userEmail);
       if (!user) {
         throw Error("No user found");
       }

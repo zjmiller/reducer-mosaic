@@ -89,41 +89,33 @@ export class FactoredEvaluationScript implements IScript {
   }
 
   public getEligibleInteractionsForUser(user: User) {
-    let eligibleInteractionsForUser = [] as FactoredEvaluationWorkspace[];
-
-    const isHonestExpert = this.state.experts.honest.some(id => id === user.id);
+    const isHonestExpert = this.state.experts.honest.some(
+      email => email === user.email,
+    );
     if (isHonestExpert) {
       const eligibleHonestWorkspaces = this.state.honestWorkspaces.filter(
         w => w.isActive === true && w.assignedTo === null,
       );
 
-      eligibleInteractionsForUser = eligibleInteractionsForUser.concat(
-        eligibleHonestWorkspaces,
-      );
+      return eligibleHonestWorkspaces;
     }
 
     const isMaliciousExpert = this.state.experts.malicious.some(
-      id => id === user.id,
+      email => email === user.email,
     );
     if (isMaliciousExpert) {
       const eligibleMaliciousWorkspaces = this.state.maliciousWorkspaces.filter(
         w => w.isActive === true && w.assignedTo === null,
       );
 
-      eligibleInteractionsForUser = eligibleInteractionsForUser.concat(
-        eligibleMaliciousWorkspaces,
-      );
+      return eligibleMaliciousWorkspaces;
     }
 
     const eligibleJudgeWorkspaces = this.state.judgeWorkspaces.filter(
       w => w.isActive === true && w.assignedTo === null,
     );
 
-    eligibleInteractionsForUser = eligibleInteractionsForUser.concat(
-      eligibleJudgeWorkspaces,
-    );
-
-    return eligibleInteractionsForUser;
+    return eligibleJudgeWorkspaces;
   }
 
   public getAlreadyAssignedInteractionForUser(user: User) {

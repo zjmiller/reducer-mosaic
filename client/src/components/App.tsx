@@ -1,13 +1,17 @@
 import { Container } from "@material-ui/core";
-import React from "react";
+import React, { useState } from "react";
 
 import { Header } from "./Header";
 import { RunAnalyzer } from "./RunAnalyzer";
 import { ParticipationSection } from "./ParticipationSection";
+import { SelectWhoYouAreHeader } from "./SelectWhoYouAreHeader";
 
 const App: React.FC = () => {
+  const [email, setEmail] = useState("1@email.com");
+
   return (
     <Container maxWidth="lg">
+      <SelectWhoYouAreHeader email={email} setEmail={setEmail} />
       <Header />
       <div
         style={{
@@ -22,7 +26,7 @@ const App: React.FC = () => {
         </div>
         <div style={{ width: "45%" }}>
           <h2 style={{ marginBottom: "10px" }}>Participate!</h2>
-          <ParticipationSection />
+          <ParticipationSection email={email} />
         </div>
       </div>
     </Container>

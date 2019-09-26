@@ -3,11 +3,9 @@ import React, { useState } from "react";
 import { useMutation } from "@apollo/react-hooks";
 import { Button, Card, TextField } from "@material-ui/core";
 
-import { GUEST_USER_ID } from "../../../config";
-
 const REPLY = gql`
-  mutation($reply: JSON, $userId: ID) {
-    submitReply(reply: $reply, userId: $userId)
+  mutation($reply: JSON, $userEmail: String) {
+    submitReply(reply: $reply, userEmail: $userEmail)
   }
 `;
 
@@ -82,7 +80,7 @@ export const WorkspaceTemplate: React.FC<WorkspaceTemplateProps> = ({
         replyType: "SUBMIT_ANSWER",
         answer: answerContent
       },
-      userId: GUEST_USER_ID
+      userEmail: "1@email.com"
     }
   });
 
@@ -92,7 +90,7 @@ export const WorkspaceTemplate: React.FC<WorkspaceTemplateProps> = ({
         replyType: "ASK_QUESTION",
         subQuestion: newSubQuestionContent
       },
-      userId: GUEST_USER_ID
+      userEmail: "1@email.com"
     }
   });
 

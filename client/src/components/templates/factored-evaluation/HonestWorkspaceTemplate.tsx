@@ -5,21 +5,21 @@ import { Button, Card, TextField } from "@material-ui/core";
 
 import { Content } from "../../Content";
 
-import { GUEST_USER_ID } from "../../../config";
-
 const REPLY = gql`
-  mutation($reply: JSON, $userId: ID) {
-    submitReply(reply: $reply, userId: $userId)
+  mutation($reply: JSON, $userEmail: String) {
+    submitReply(reply: $reply, userEmail: $userEmail)
   }
 `;
 
 interface WorkspaceTemplateProps {
   data: any;
+  email: string;
   endTemplateSession(): void;
 }
 
 export const HonestWorkspaceTemplate: React.FC<WorkspaceTemplateProps> = ({
   data,
+  email,
   endTemplateSession
 }) => {
   const { question, availableExports } = data;
@@ -32,7 +32,7 @@ export const HonestWorkspaceTemplate: React.FC<WorkspaceTemplateProps> = ({
         replyType: "SUBMIT_HONEST_ANSWER_CANDIDATE",
         answerCandidate: answerCandidateContent
       },
-      userId: GUEST_USER_ID
+      userEmail: email
     }
   });
 

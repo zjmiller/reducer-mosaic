@@ -6,8 +6,8 @@ export const typeDefs = gql`
 
   type Mutation {
     createCopyOfRun(runId: ID, index: Int): Boolean
-    findWorkForUser(userId: ID): JSON
-    submitReply(reply: JSON, userId: ID): Boolean
+    findWorkForUser(userEmail: String): JSON
+    submitReply(reply: JSON, userEmail: String): Boolean
     totalReset: Boolean
     adminAction(runId: ID, action: JSON): Boolean
   }

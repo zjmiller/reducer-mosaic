@@ -5,8 +5,6 @@ import React, { useState } from "react";
 
 import { FEHonestWorkspaceViewer } from "./FEHonestWorkspaceViewer";
 
-import { GUEST_USER_ID } from "../../../config";
-
 interface FEHistoryViewerProps {
   data: any;
   historyIndex: number;
@@ -69,7 +67,10 @@ const FEHistoryViewerContainer: React.FC<{
   const [unAssignAll] = useMutation(ADMIN_ACTION, {
     variables: {
       runId: runId,
-      action: { actionType: "_ADMIN_UN_ASSIGN_ALL", userId: GUEST_USER_ID }
+      action: {
+        actionType: "_ADMIN_UN_ASSIGN_ALL",
+        userEmail: "1@email.com"
+      }
     }
   });
 

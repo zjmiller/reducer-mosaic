@@ -5,16 +5,15 @@ import { Button, Card, TextField } from "@material-ui/core";
 
 import { Content } from "../../Content";
 
-import { GUEST_USER_ID } from "../../../config";
-
 const REPLY = gql`
-  mutation($reply: JSON, $userId: ID) {
-    submitReply(reply: $reply, userId: $userId)
+  mutation($reply: JSON, $userEmail: String) {
+    submitReply(reply: $reply, userEmail: $userEmail)
   }
 `;
 
 interface WorkspaceTemplateProps {
   data: any;
+  email: string;
   endTemplateSession(): void;
   findWork(): void;
 }
@@ -90,6 +89,7 @@ const SubQuestion: React.FC<any> = ({
 
 export const JudgeWorkspaceTemplate: React.FC<WorkspaceTemplateProps> = ({
   data,
+  email,
   endTemplateSession,
   findWork
 }) => {
@@ -114,7 +114,7 @@ export const JudgeWorkspaceTemplate: React.FC<WorkspaceTemplateProps> = ({
           replyType: "SELECT_ANSWER_CANDIDATE",
           answerCandidateSelected: 1
         },
-        userId: GUEST_USER_ID
+        userEmail: email
       }
     });
 
@@ -125,7 +125,7 @@ export const JudgeWorkspaceTemplate: React.FC<WorkspaceTemplateProps> = ({
           replyType: "SELECT_ANSWER_CANDIDATE",
           answerCandidateSelected: 2
         },
-        userId: GUEST_USER_ID
+        userEmail: email
       }
     });
 
@@ -136,7 +136,7 @@ export const JudgeWorkspaceTemplate: React.FC<WorkspaceTemplateProps> = ({
           replyType: "UNLOCK_EXPORT",
           exportId
         },
-        userId: GUEST_USER_ID
+        userEmail: email
       }
     });
     findWork();
@@ -148,7 +148,7 @@ export const JudgeWorkspaceTemplate: React.FC<WorkspaceTemplateProps> = ({
         replyType: "ASK_QUESTION",
         subQuestion: newSubQuestionContent
       },
-      userId: GUEST_USER_ID
+      userEmail: email
     }
   });
 

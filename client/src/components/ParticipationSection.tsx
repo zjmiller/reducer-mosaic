@@ -3,7 +3,6 @@ import { Button } from "@material-ui/core";
 import gql from "graphql-tag";
 import React, { useState } from "react";
 
-import { GUEST_USER_ID } from "../config";
 import { WorkspaceTemplate } from "./templates/basic-decompositiono/WorkspaceTemplate";
 
 import { JudgeWorkspaceTemplate } from "./templates/factored-evaluation/JudgeWorkspaceTemplate";
@@ -11,8 +10,8 @@ import { HonestWorkspaceTemplate } from "./templates/factored-evaluation/HonestW
 import { MaliciousWorkspaceTemplate } from "./templates/factored-evaluation/MaliciousWorkspaceTemplate";
 
 const FIND_WORK = gql`
-  mutation($userId: ID) {
-    findWorkForUser(userId: $userId)
+  mutation($userEmail: String) {
+    findWorkForUser(userEmail: $userEmail)
   }
 `;
 
@@ -20,7 +19,8 @@ const Template: React.FC<any> = ({
   templateData,
   templateIdentifier,
   endTemplateSession,
-  findWork
+  findWork,
+  email
 }) => {
   if (templateIdentifier === "WORKSPACE_TEMPLATE") {
     return (
@@ -35,6 +35,7 @@ const Template: React.FC<any> = ({
     return (
       <JudgeWorkspaceTemplate
         data={templateData}
+        email={email}
         endTemplateSession={endTemplateSession}
         findWork={findWork}
       />
@@ -45,6 +46,7 @@ const Template: React.FC<any> = ({
     return (
       <HonestWorkspaceTemplate
         data={templateData}
+        email={email}
         endTemplateSession={endTemplateSession}
       />
     );
@@ -54,6 +56,7 @@ const Template: React.FC<any> = ({
     return (
       <MaliciousWorkspaceTemplate
         data={templateData}
+        email={email}
         endTemplateSession={endTemplateSession}
       />
     );
@@ -62,11 +65,11 @@ const Template: React.FC<any> = ({
   return null;
 };
 
-export const ParticipationSection: React.FC = () => {
+export const ParticipationSection: React.FC<any> = ({ email }) => {
   const [savedData, setSavedData] = useState();
 
   const [findWork, { data, error }] = useMutation(FIND_WORK, {
-    variables: { userId: GUEST_USER_ID }
+    variables: { userEmail: email }
   });
 
   if (data && data !== savedData) {
@@ -93,6 +96,7 @@ export const ParticipationSection: React.FC = () => {
           templateIdentifier={savedData.findWorkForUser.templateIdentifier}
           endTemplateSession={() => setShouldShowTemplate(false)}
           findWork={findWork}
+          email={email}
         />
       )}
       {error && (

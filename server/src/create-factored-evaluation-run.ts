@@ -6,8 +6,8 @@ export const createFactoredEvaluationRun = async () => {
   const factoredEvaluationScript = await FactoredEvaluationScriptRepository.create(
     {
       experts: {
-        honest: ["a75b3cb2-2f57-4068-afaa-1c432ee8a78c"],
-        malicious: ["a75b3cb2-2f57-4068-afaa-1c432ee8a78c"],
+        honest: ["1@email.com"],
+        malicious: ["2@email.com"],
       },
     },
   );
