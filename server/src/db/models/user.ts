@@ -14,5 +14,5 @@ export class User extends Model<User> {
   @Column({
     type: Sequelize.STRING,
   })
-  public name: string;
+  public email: string;
 }

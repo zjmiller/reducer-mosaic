@@ -10,13 +10,16 @@ async function main(): Promise<undefined> {
 
   const topLevelScheduler = new TopLevelScheduler();
 
-  // create guest user if it's not in db
-  try {
-    await UserRepository.findUserByPk("a75b3cb2-2f57-4068-afaa-1c432ee8a78c");
-  } catch (e) {
-    await UserRepository.create({
-      id: "a75b3cb2-2f57-4068-afaa-1c432ee8a78c",
-    });
+  // create 50 users
+  let i = 0;
+  while (i++ < 50) {
+    try {
+      await UserRepository.findUserByEmail(`${i}@email.com`);
+    } catch (e) {
+      await UserRepository.create({
+        email: `${i}@email.com`,
+      });
+    }
   }
 
   await createFactoredEvaluationRun();
