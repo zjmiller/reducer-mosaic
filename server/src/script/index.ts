@@ -9,11 +9,11 @@ import { User } from "../user";
 export interface IScript {
   id: string;
 
-  getAllInteractions(): Interaction[];
-
   getAlreadyAssignedInteractionForUser(user: User): MaybeInteraction;
 
   getEligibleInteractionsForUser(user: User): Interaction[];
+
+  getAllInteractions(): Interaction[]; // change to getAllPendingInteractions
 
   generateTemplate(interaction: Interaction): Template;
 

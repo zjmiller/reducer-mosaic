@@ -8,23 +8,26 @@ import { typeDefs } from "./type-defs";
 import { TopLevelScheduler } from "../top-level-scheduler";
 
 export function startServer(topLevelScheduler: TopLevelScheduler) {
-  const resolvers = createResolvers(topLevelScheduler);
+  return new Promise(resolve => {
+    const resolvers = createResolvers(topLevelScheduler);
 
-  const app = express();
+    const app = express();
 
-  app.use(express.static(path.join(__dirname, "/../../../client/build")));
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname + "/../../../client/build/index.html"));
+    app.use(express.static(path.join(__dirname, "/../../../client/build")));
+    app.get("*", (req, res) => {
+      res.sendFile(path.join(__dirname + "/../../../client/build/index.html"));
+    });
+
+    const graphQLServer = new ApolloServer({ typeDefs, resolvers });
+
+    graphQLServer.applyMiddleware({ app });
+
+    const httpServer = app.listen(process.env.PORT || 5000, () => {
+      console.log(`🚀  Server ready at ${process.env.PORT || 5000}`);
+      resolve();
+    });
+
+    // This is for future GraphQL subscriptions, though there are none currently.
+    graphQLServer.installSubscriptionHandlers(httpServer);
   });
-
-  const graphQLServer = new ApolloServer({ typeDefs, resolvers });
-
-  graphQLServer.applyMiddleware({ app });
-
-  const httpServer = app.listen(process.env.PORT || 5000, () => {
-    console.log(`🚀  Server ready at ${process.env.PORT || 5000}`);
-  });
-
-  // This is for future GraphQL subscriptions, though there are none currently.
-  graphQLServer.installSubscriptionHandlers(httpServer);
 }

@@ -2,4 +2,6 @@ import { BasicDecompositionReply } from "../script-registry/basic-decomposition-
 
 import { FactoredEvaluationReply } from "../script-registry/factored-evaluation-script/reply";
 
-export type Reply = BasicDecompositionReply | FactoredEvaluationReply;
+import { Reply } from "../script-registry/estimation-script/types";
+
+export type Reply = BasicDecompositionReply | FactoredEvaluationReply | Reply;

@@ -1,4 +1,4 @@
-import { createFactoredEvaluationRun } from "./create-factored-evaluation-run";
+import { createEstimationRun } from "./create-estimation-run";
 import { ensureDbInitialized, setupDBTables } from "./db";
 import { startServer } from "./graph-ql-server";
 import { TopLevelScheduler } from "./top-level-scheduler";
@@ -22,9 +22,19 @@ async function main(): Promise<undefined> {
     }
   }
 
-  await createFactoredEvaluationRun();
+  await createEstimationRun();
 
-  startServer(topLevelScheduler);
+  await startServer(topLevelScheduler);
+
+  const u1 = await UserRepository.findUserByEmail(`1@email.com`);
+
+  if (!u1) {
+    throw Error("");
+  }
+
+  const template = topLevelScheduler.findWorkForUser(u1);
+
+  console.log(template);
 
   return;
 }
