@@ -26,16 +26,6 @@ async function main(): Promise<undefined> {
 
   await startServer(topLevelScheduler);
 
-  const u1 = await UserRepository.findUserByEmail(`1@email.com`);
-
-  if (!u1) {
-    throw Error("");
-  }
-
-  const template = topLevelScheduler.findWorkForUser(u1);
-
-  console.log(template);
-
   return;
 }
 

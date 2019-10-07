@@ -24,10 +24,10 @@ export function startServer(topLevelScheduler: TopLevelScheduler) {
 
     const httpServer = app.listen(process.env.PORT || 5000, () => {
       console.log(`🚀  Server ready at ${process.env.PORT || 5000}`);
+      graphQLServer.installSubscriptionHandlers(httpServer);
       resolve();
     });
 
     // This is for future GraphQL subscriptions, though there are none currently.
-    graphQLServer.installSubscriptionHandlers(httpServer);
   });
 }
