@@ -3,6 +3,7 @@ import deepFreeze from "deep-freeze";
 import { generateTemplate } from "./template";
 import { getInitialState } from "./initial-state";
 import { rootReducer } from "./reducer";
+import { convertReplyIntoAction } from "./reply";
 import {
   getAlreadyAssignedInteractionsForUser,
   getEligibleInteractionsForUser,
@@ -182,11 +183,7 @@ export class Script implements IScript {
       throw Error("Interaction doesn't correspond to a workspace");
     }
 
-    const action = {
-      actionType: "REPLY" as "REPLY",
-      workspaceId: workspace.id,
-      reply,
-    };
+    const action = convertReplyIntoAction(reply, workspace);
 
     this.state = this.reducer(this.state, action);
 

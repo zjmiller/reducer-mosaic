@@ -39,14 +39,14 @@ export function rootReducer(state: State, action: Action) {
       workspace.assignedTo = action.userId;
 
       // Make sure there's always an available generate questions workspace
-      if (workspace.workspaceType === "GENERATE_QUESTIONS_WORKSPACE") {
-        draftState.generateQuestionsWorkspaces.push({
-          id: draftState.idIndex++,
-          workspaceType: "GENERATE_QUESTIONS_WORKSPACE",
-          assignedTo: null,
-          isActive: true,
-        });
-      }
+      // if (workspace.workspaceType === "GENERATE_QUESTIONS_WORKSPACE") {
+      //   draftState.generateQuestionsWorkspaces.push({
+      //     id: draftState.idIndex++,
+      //     workspaceType: "GENERATE_QUESTIONS_WORKSPACE",
+      //     assignedTo: null,
+      //     isActive: true,
+      //   });
+      // }
     } else if (action.actionType === "REPLY") {
       const { reply, workspaceId } = action;
 
@@ -66,7 +66,7 @@ export function rootReducer(state: State, action: Action) {
 
         // Remove generate questions workspace now that it's served its purpose.
         draftState.generateQuestionsWorkspaces = draftState.generateQuestionsWorkspaces.filter(
-          w => w.id === workspaceId,
+          w => w.id !== workspaceId,
         );
       } else if (reply.replyType === "FORMALIZE_QUESTION") {
         const formalizedQuestionWorkspace = draftState.formalizeQuestionWorkspaces.find(
@@ -139,8 +139,7 @@ export function rootReducer(state: State, action: Action) {
         } else if (reply.didPass === true) {
           decomposeQuestionWorkspace.didPass = true;
         } else {
-          decomposeQuestionWorkspace.a1 = reply.a1;
-          decomposeQuestionWorkspace.a2 = reply.a2;
+          decomposeQuestionWorkspace.subquestions = reply.subquestions;
           decomposeQuestionWorkspace.aggregation = reply.aggregation;
         }
 
@@ -162,19 +161,15 @@ export function rootReducer(state: State, action: Action) {
         } else if (reply.didPass === true) {
           decomposeQuestionWorkspace.didPass = true;
         } else {
-          if (reply.a1) {
-            decomposeQuestionWorkspace.a1 = reply.a1;
-          }
-
-          if (reply.a2) {
-            decomposeQuestionWorkspace.a2 = reply.a2;
+          if (reply.subquestions) {
+            decomposeQuestionWorkspace.subquestions = reply.subquestions;
           }
 
           if (reply.aggregation) {
             decomposeQuestionWorkspace.aggregation = reply.aggregation;
           }
 
-          if (decomposeQuestionWorkspace.a1 && decomposeQuestionWorkspace.a2) {
+          if (decomposeQuestionWorkspace.subquestions) {
             // check depth limit
             const depth = getDepthOfDecompositionWorkspace(
               draftState,
@@ -185,30 +180,19 @@ export function rootReducer(state: State, action: Action) {
               return;
             }
 
-            const a1DecompositionWorkspace = {
-              id: draftState.idIndex++,
-              parentId: decomposeQuestionWorkspace.id,
-              workspaceType: "DECOMPOSITION_WORKSPACE" as "DECOMPOSITION_WORKSPACE",
-              question: decomposeQuestionWorkspace.a1,
-              assignedTo: null,
-              isActive: true,
-              isUnderReview: false,
-            };
+            for (const subquestion of decomposeQuestionWorkspace.subquestions) {
+              const subquestionWorkspace = {
+                id: draftState.idIndex++,
+                parentId: decomposeQuestionWorkspace.id,
+                workspaceType: "DECOMPOSITION_WORKSPACE" as "DECOMPOSITION_WORKSPACE",
+                question: subquestion,
+                assignedTo: null,
+                isActive: true,
+                isUnderReview: false,
+              };
 
-            const a2DecompositionWorkspace = {
-              id: draftState.idIndex++,
-              parentId: decomposeQuestionWorkspace.id,
-              workspaceType: "DECOMPOSITION_WORKSPACE" as "DECOMPOSITION_WORKSPACE",
-              question: decomposeQuestionWorkspace.a2,
-              assignedTo: null,
-              isActive: true,
-              isUnderReview: false,
-            };
-
-            draftState.decompositionWorkspaces.push(
-              a1DecompositionWorkspace,
-              a2DecompositionWorkspace,
-            );
+              draftState.decompositionWorkspaces.push(subquestionWorkspace);
+            }
           }
         }
 

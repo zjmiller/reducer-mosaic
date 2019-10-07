@@ -1,5 +1,49 @@
 // CONTENT
 
+export const properties = [
+  "number",
+  "volume",
+  "mass",
+  "length",
+  "area",
+  "time",
+  "density",
+  "number / number",
+  "height",
+  "width",
+  "mass / mass",
+  "volume / time",
+  "money",
+  "number / time",
+  "force",
+  "energy",
+  "food calories",
+  "volume / volume",
+  "length / time",
+  "mass / time",
+  "number / area",
+  "length / length",
+  "food calories / mass",
+  "mass / volume",
+  "number / mass",
+  "time / time",
+  "number / volume",
+  "pressure",
+  "area / area",
+  "mass / money",
+  "money / energy",
+  "radius",
+  "volume / mass",
+  "force / mass",
+  "pressure / time",
+  "energy / time",
+  "energy / mass",
+  "volume / height",
+  "money / time",
+  "volume / number",
+  "length / time^2",
+];
+
 export type Property =
   | "number"
   | "volume"
@@ -44,15 +88,15 @@ export type Property =
   | "length / time^2";
 
 export type PropertyEntityQuestion = {
-  property: Property;
+  property?: string;
   entity: string;
 };
 
-export type Aggregation =
-  | "division"
-  | "multiplication"
-  | "addition"
-  | "subtraction";
+export type Aggregation = string;
+// | "division"
+// | "multiplication"
+// | "addition"
+// | "subtraction";
 
 // ACTIONS and REPLIES
 
@@ -79,7 +123,7 @@ interface IAssignUserAction {
   workspaceId: number;
 }
 
-interface IReplyAction {
+export interface IReplyAction {
   actionType: "REPLY";
   workspaceId: number;
   reply: Reply;
@@ -90,9 +134,10 @@ export type Reply =
   | IFormalizeQuestionReply
   | IReviewFormalizedQuestionReply
   | IDecomposeQuestionReply
-  | IReviewDecomposedQuestionReply;
+  | IReviewDecomposedQuestionReply
+  | WillReply;
 
-interface IGenerateQuestionsReply {
+export interface IGenerateQuestionsReply {
   replyType: "GENERATE_QUESTIONS";
   questions: string[];
 }
@@ -115,8 +160,7 @@ interface IDecomposeQuestionReply {
   replyType: "DECOMPOSE_QUESTION";
   isInvalid?: boolean;
   didPass?: boolean;
-  a1?: PropertyEntityQuestion;
-  a2?: PropertyEntityQuestion;
+  subquestions?: PropertyEntityQuestion[];
   aggregation?: Aggregation;
   initialComments?: string;
 }
@@ -125,8 +169,7 @@ interface IReviewDecomposedQuestionReply {
   replyType: "REVIEW_DECOMPOSED_QUESTION";
   isInvalid?: boolean;
   didPass?: boolean;
-  a1?: PropertyEntityQuestion;
-  a2?: PropertyEntityQuestion;
+  subquestions?: PropertyEntityQuestion[];
   aggregation?: Aggregation;
   reviewerComments?: string;
 }
@@ -164,8 +207,7 @@ export interface IDecompositionWorkspace extends IWorkspace {
   question: PropertyEntityQuestion;
   isInvalid?: boolean;
   didPass?: boolean;
-  a1?: PropertyEntityQuestion;
-  a2?: PropertyEntityQuestion;
+  subquestions?: PropertyEntityQuestion[];
   aggregation?: Aggregation;
   initialComments?: string;
   reviewerComments?: string;
@@ -198,6 +240,13 @@ export type History = IHistory;
 // TEMPLATE
 
 export type FormalQuestion = { property?: string; entity: string };
+
+export type WillReply = GenerationReply | FormalizationReply | DecomposerReply;
+
+export type GenerationReply = {
+  replyType: "InitialQuestions";
+  questions: string[];
+};
 
 export type FormalizationReply =
   | { replyType: "FormalQuestion"; question: FormalQuestion; comments: string }
