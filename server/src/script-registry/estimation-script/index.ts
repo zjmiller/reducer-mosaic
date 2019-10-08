@@ -14,7 +14,7 @@ import { getAllWorkspaces } from "./utils";
 import {
   Action,
   History,
-  InitialSetupData,
+  SetupData,
   Reply,
   State,
   Template,
@@ -30,26 +30,26 @@ export class Script implements IScript {
   public id: string;
   private state: State;
   private history: History;
-  private initialSetupData: InitialSetupData;
+  private setupData: SetupData;
   private randomSeedString: string; // used to make ensure deterministic id generation in reducer
   private scriptDAO: ScriptDAO;
 
   constructor({
     id,
-    initialSetupData,
+    setupData,
     history,
     randomSeedString,
     scriptDAO,
   }: {
     id: string;
-    initialSetupData: InitialSetupData;
+    setupData: SetupData;
     history: History;
     randomSeedString: string;
     scriptDAO: ScriptDAO;
   }) {
     this.id = id;
     this.randomSeedString = randomSeedString;
-    this.initialSetupData = initialSetupData;
+    this.setupData = setupData;
     this.history = history;
     this.scriptDAO = scriptDAO;
 
@@ -106,7 +106,7 @@ export class Script implements IScript {
 
     const newScript = await ScriptRepository.create({
       history: copyHistory,
-      initialSetupData: this.initialSetupData,
+      setupData: this.setupData,
       randomSeedString: this.randomSeedString,
     });
 
@@ -120,7 +120,7 @@ export class Script implements IScript {
   private setupRun(): void {
     const action = {
       actionType: "SETUP" as "SETUP",
-      initialSetupData: this.initialSetupData,
+      setupData: this.setupData,
     };
 
     this.state = this.reducer(this.state, action);

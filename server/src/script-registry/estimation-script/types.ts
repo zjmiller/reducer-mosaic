@@ -54,17 +54,17 @@ export type Action = ISetupAction | IAssignUserAction | IReplyAction;
 
 export type EstimationAction = Action;
 
-interface IInitialSetupData {
+interface ISetupData {
   reviewers: UserId[];
   depthLimit: number;
   initialQuestions: string[];
 }
 
-export type InitialSetupData = IInitialSetupData;
+export type SetupData = ISetupData;
 
 interface ISetupAction {
   actionType: "SETUP";
-  initialSetupData: IInitialSetupData;
+  setupData: ISetupData;
 }
 
 interface IAssignUserAction {

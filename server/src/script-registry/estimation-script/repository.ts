@@ -2,7 +2,7 @@ import { Script as ScriptModel } from "../../db/models/script";
 
 import { Script } from "./index";
 import { getInitialState } from "./initial-state";
-import { History, InitialSetupData } from "./types";
+import { History, SetupData } from "./types";
 
 export class ScriptDAO {
   constructor(private modelInstance: ScriptModel) {}
@@ -16,11 +16,11 @@ const scripts: any[] = [];
 
 export const ScriptRepository = {
   async create({
-    initialSetupData,
+    setupData,
     history,
     randomSeedString,
   }: {
-    initialSetupData: InitialSetupData;
+    setupData: SetupData;
     history?: History;
     randomSeedString?: string;
   }): Promise<any> {
@@ -42,7 +42,7 @@ export const ScriptRepository = {
 
     const script = new Script({
       id: scriptModel.id,
-      initialSetupData,
+      setupData,
       history,
       randomSeedString,
       scriptDAO,
@@ -73,7 +73,7 @@ export const ScriptRepository = {
 
     const scriptDAO = new ScriptDAO(scriptModel);
 
-    const defaultSetupData: InitialSetupData = {
+    const defaultSetupData: SetupData = {
       depthLimit: 3,
       initialQuestions: [],
       reviewers: [],
@@ -81,7 +81,7 @@ export const ScriptRepository = {
 
     const script = new Script({
       id: scriptModel.id,
-      initialSetupData: defaultSetupData,
+      setupData: defaultSetupData,
       history,
       randomSeedString,
       scriptDAO,

@@ -9,25 +9,23 @@ export function rootReducer(state: State, action: Action) {
 
   const newState = produce(state, draftState => {
     if (action.actionType === "SETUP") {
-      const { initialSetupData } = action;
-      const formalizeQuestionWorkspaces = initialSetupData.initialQuestions.map(
-        q => ({
-          id: draftState.idIndex++,
-          workspaceType: "FORMALIZE_QUESTION_WORKSPACE" as "FORMALIZE_QUESTION_WORKSPACE",
-          question: q,
-          assignedTo: null,
-          isActive: true,
-          isUnderReview: false,
-        }),
-      );
+      const { setupData } = action;
+      const formalizeQuestionWorkspaces = setupData.initialQuestions.map(q => ({
+        id: draftState.idIndex++,
+        workspaceType: "FORMALIZE_QUESTION_WORKSPACE" as "FORMALIZE_QUESTION_WORKSPACE",
+        question: q,
+        assignedTo: null,
+        isActive: true,
+        isUnderReview: false,
+      }));
 
       draftState.formalizeQuestionWorkspaces.push(
         ...formalizeQuestionWorkspaces,
       );
 
-      draftState.depthLimit = initialSetupData.depthLimit;
+      draftState.depthLimit = setupData.depthLimit;
 
-      draftState.reviewers = initialSetupData.reviewers;
+      draftState.reviewers = setupData.reviewers;
     } else if (action.actionType === "ASSIGN_USER") {
       const allWorkspaces = getAllWorkspaces(draftState);
 

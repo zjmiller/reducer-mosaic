@@ -4,7 +4,7 @@ import { ScriptRepository as EstimationScriptRepository } from "./script-registr
 
 export const createEstimationRun = async () => {
   const estimationScript = await EstimationScriptRepository.create({
-    initialSetupData: {
+    setupData: {
       depthLimit: 3,
       initialQuestions: [],
       reviewers: [],
