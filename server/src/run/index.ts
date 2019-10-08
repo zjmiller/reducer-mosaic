@@ -20,8 +20,8 @@ export class Run {
     return this.runLevelScheduler.getAlreadyAssignedInteractionForUser(user);
   }
 
-  public getAllInteractions() {
-    return this.script.getAllInteractions();
+  public getAllPendingInteractions() {
+    return this.script.getAllPendingInteractions();
   }
 
   public generateTemplate(interaction: Interaction) {

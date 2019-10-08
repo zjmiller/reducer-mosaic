@@ -71,8 +71,8 @@ export class Script implements IScript {
     return getAlreadyAssignedInteractionsForUser(this.state, user);
   }
 
-  public getAllInteractions() {
-    return getAllWorkspaces(this.state);
+  public getAllPendingInteractions() {
+    return getAllWorkspaces(this.state).filter(w => w.isActive);
   }
 
   public getHistory() {

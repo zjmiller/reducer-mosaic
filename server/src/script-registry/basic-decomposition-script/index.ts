@@ -76,8 +76,8 @@ export class BasicDecompositionScript implements IScript {
     return interaction ? interaction : null;
   }
 
-  public getAllInteractions() {
-    return this.state.workspaces;
+  public getAllPendingInteractions() {
+    return this.state.workspaces.filter(w => w.isActive);
   }
 
   public getHistory() {

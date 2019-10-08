@@ -29,7 +29,7 @@ export class TopLevelScheduler {
       }
     }
 
-    const run = this.findRunThatContainsInteraction(interaction);
+    const run = this.findRunThatContainsPendingInteraction(interaction);
     if (!run) {
       throw Error("Interaction not associated with run");
     }
@@ -50,7 +50,7 @@ export class TopLevelScheduler {
       throw Error("No interaction");
     }
 
-    const run = this.findRunThatContainsInteraction(interaction);
+    const run = this.findRunThatContainsPendingInteraction(interaction);
     if (!run) {
       throw Error("No run");
     }
@@ -92,11 +92,11 @@ export class TopLevelScheduler {
     return allEligibleInteractions[0];
   }
 
-  private findRunThatContainsInteraction(interaction: Interaction) {
+  private findRunThatContainsPendingInteraction(interaction: Interaction) {
     const runs = RunRepository.findAll();
 
     return runs.find(r => {
-      const interactions = r.getAllInteractions();
+      const interactions = r.getAllPendingInteractions();
       return interactions.some(i => i === interaction);
     });
   }

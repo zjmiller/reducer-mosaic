@@ -119,15 +119,15 @@ export class FactoredEvaluationScript implements IScript {
   }
 
   public getAlreadyAssignedInteractionForUser(user: User) {
-    const interaction = this.getAllInteractions().find(
+    const interaction = this.getAllWorkspaces().find(
       w => w.isActive === true && w.assignedTo === user.id,
     );
 
     return interaction ? interaction : null;
   }
 
-  public getAllInteractions() {
-    return this.getAllWorkspaces();
+  public getAllPendingInteractions() {
+    return this.getAllWorkspaces().filter(w => w.isActive);
   }
 
   public getHistory() {

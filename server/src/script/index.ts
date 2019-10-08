@@ -13,7 +13,7 @@ export interface IScript {
 
   getEligibleInteractionsForUser(user: User): Interaction[];
 
-  getAllInteractions(): Interaction[]; // change to getAllPendingInteractions
+  getAllPendingInteractions(): Interaction[];
 
   generateTemplate(interaction: Interaction): Template;
 
