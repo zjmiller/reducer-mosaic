@@ -57,13 +57,13 @@ export const RunRepository = {
 
     const runIds = runModelInstances.map(r => r.id);
 
-    const runs = await Promise.all(
+    const runsToLoad = await Promise.all(
       runIds.map(async rId => {
         return await RunRepository.findRunByPk(rId);
       }),
     );
 
-    return runs;
+    return runsToLoad;
   },
 
   reset() {

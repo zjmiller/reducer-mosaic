@@ -1,9 +1,9 @@
-import { RunRepository } from "./run-repository";
 import { Interaction } from "../interaction";
 import { Reply } from "../reply";
 import { IRunLevelScheduler } from "../run-level-scheduler";
 import { IScript } from "../script";
 import { User } from "../user";
+import { RunRepository } from "./run-repository";
 
 export class Run {
   constructor(
