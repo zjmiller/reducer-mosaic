@@ -87,11 +87,6 @@ export type Property =
   | "volume / number"
   | "length / time^2";
 
-export type PropertyEntityQuestion = {
-  property?: string;
-  entity: string;
-};
-
 export type Aggregation = string;
 // | "division"
 // | "multiplication"
@@ -145,14 +140,14 @@ export interface IGenerateQuestionsReply {
 interface IFormalizeQuestionReply {
   replyType: "FORMALIZE_QUESTION";
   isInvalid?: boolean;
-  formalizedQuestion?: PropertyEntityQuestion;
+  formalizedQuestion?: FormalQuestion;
   initialComments?: string;
 }
 
 interface IReviewFormalizedQuestionReply {
   replyType: "REVIEW_FORMALIZED_QUESTION";
   isInvalid?: boolean;
-  formalizedQuestion?: PropertyEntityQuestion;
+  formalizedQuestion?: FormalQuestion;
   reviewerComments?: string;
 }
 
@@ -160,7 +155,7 @@ interface IDecomposeQuestionReply {
   replyType: "DECOMPOSE_QUESTION";
   isInvalid?: boolean;
   didPass?: boolean;
-  subquestions?: PropertyEntityQuestion[];
+  subquestions?: FormalQuestion[];
   aggregation?: Aggregation;
   initialComments?: string;
 }
@@ -169,7 +164,7 @@ interface IReviewDecomposedQuestionReply {
   replyType: "REVIEW_DECOMPOSED_QUESTION";
   isInvalid?: boolean;
   didPass?: boolean;
-  subquestions?: PropertyEntityQuestion[];
+  subquestions?: FormalQuestion[];
   aggregation?: Aggregation;
   reviewerComments?: string;
 }
@@ -195,7 +190,7 @@ export interface IFormalizeQuestionWorkspace extends IWorkspace {
   workspaceType: "FORMALIZE_QUESTION_WORKSPACE";
   question: string;
   isInvalid?: boolean;
-  formalizedQuestion?: PropertyEntityQuestion;
+  formalizedQuestion?: FormalQuestion;
   initialComments?: string;
   reviewerComments?: string;
   isUnderReview: boolean;
@@ -204,10 +199,10 @@ export interface IFormalizeQuestionWorkspace extends IWorkspace {
 export interface IDecompositionWorkspace extends IWorkspace {
   parentId?: WorkspaceId;
   workspaceType: "DECOMPOSITION_WORKSPACE";
-  question: PropertyEntityQuestion;
+  question: FormalQuestion;
   isInvalid?: boolean;
   didPass?: boolean;
-  subquestions?: PropertyEntityQuestion[];
+  subquestions?: FormalQuestion[];
   aggregation?: Aggregation;
   initialComments?: string;
   reviewerComments?: string;
