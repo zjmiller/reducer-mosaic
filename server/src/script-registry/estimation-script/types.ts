@@ -121,16 +121,15 @@ interface IAssignUserAction {
 export interface IReplyAction {
   actionType: "REPLY";
   workspaceId: number;
-  reply: Reply;
+  reply: ActionReply;
 }
 
-export type Reply =
+export type ActionReply =
   | IGenerateQuestionsReply
   | IFormalizeQuestionReply
   | IReviewFormalizedQuestionReply
   | IDecomposeQuestionReply
-  | IReviewDecomposedQuestionReply
-  | WillReply;
+  | IReviewDecomposedQuestionReply;
 
 export interface IGenerateQuestionsReply {
   replyType: "GENERATE_QUESTIONS";
@@ -236,7 +235,7 @@ export type History = IHistory;
 
 export type FormalQuestion = { property?: string; entity: string };
 
-export type WillReply = GenerationReply | FormalizationReply | DecomposerReply;
+export type Reply = GenerationReply | FormalizationReply | DecomposerReply;
 
 export type GenerationReply = {
   replyType: "InitialQuestions";
