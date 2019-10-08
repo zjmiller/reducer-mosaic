@@ -27,7 +27,7 @@ export class Script extends Model<Script> {
     type: Sequelize.JSON,
     allowNull: false,
   })
-  public initialState: any;
+  public setupData: any;
 
   @Column({
     type: Sequelize.JSON,

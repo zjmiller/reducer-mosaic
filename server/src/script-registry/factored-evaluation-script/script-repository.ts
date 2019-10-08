@@ -1,9 +1,9 @@
 import { getInitialState } from "./get-initial-state";
 
 import {
-  Experts,
   FactoredEvaluationScript,
   FactoredEvaluationScriptHistory,
+  SetupData,
 } from "./index";
 
 import { Script as ScriptModel } from "../../db/models/script";
@@ -20,26 +20,15 @@ const scripts: FactoredEvaluationScript[] = [];
 
 export const FactoredEvaluationScriptRepository = {
   async create({
-    rootLevelQuestion,
-    experts,
+    setupData,
     history,
     randomSeedString,
   }: {
-    rootLevelQuestion?: string;
-    experts?: Experts;
+    setupData: SetupData;
     history?: FactoredEvaluationScriptHistory;
     randomSeedString?: string;
   }): Promise<FactoredEvaluationScript> {
     randomSeedString = randomSeedString || String(Date.now());
-
-    rootLevelQuestion =
-      rootLevelQuestion ||
-      "This is the default content for a factored evaluation root-level question";
-
-    experts = experts || {
-      honest: [],
-      malicious: [],
-    };
 
     history = history || {
       actions: [],
@@ -57,8 +46,7 @@ export const FactoredEvaluationScriptRepository = {
 
     const script = new FactoredEvaluationScript({
       id: scriptModel.id,
-      rootLevelQuestion,
-      experts,
+      setupData,
       history,
       randomSeedString,
       scriptDAO,
@@ -80,14 +68,10 @@ export const FactoredEvaluationScriptRepository = {
       throw Error("Script not found");
     }
 
-    const { randomSeedString, initialState, actions } = scriptModel;
-
-    const rootLevelQuestion = initialState.question;
-
-    const experts: Experts = initialState.experts;
+    const { randomSeedString, setupData, actions } = scriptModel;
 
     const history: FactoredEvaluationScriptHistory = {
-      initialState,
+      initialState: getInitialState(),
       actions,
     };
 
@@ -95,8 +79,7 @@ export const FactoredEvaluationScriptRepository = {
 
     const script = new FactoredEvaluationScript({
       id: scriptModel.id,
-      rootLevelQuestion,
-      experts,
+      setupData,
       history,
       randomSeedString,
       scriptDAO,

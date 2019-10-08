@@ -14,9 +14,11 @@ export type AdminUnassignAllAction = {
 
 export type RunSetupAction = {
   actionType: "SETUP_RUN";
-  rootLevelQuestion: string;
-  experts: Experts;
-  randomSeedString: string;
+  setupData: {
+    rootLevelQuestion: string;
+    initialExperts: Experts;
+    randomSeedString: string;
+  };
 };
 
 export type ProcessReplyAction = {

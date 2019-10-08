@@ -23,7 +23,7 @@ export const ScriptRepository = {
     setupData: SetupData;
     history?: History;
     randomSeedString?: string;
-  }): Promise<any> {
+  }): Promise<Script> {
     randomSeedString = randomSeedString || String(Date.now());
 
     history = history || {
@@ -32,20 +32,20 @@ export const ScriptRepository = {
     };
 
     const scriptModel = await ScriptModel.create({
+      actions: history.actions,
       randomSeedString,
       scriptType: "ESTIMATION",
-      initialState: history.initialState,
-      actions: history.actions,
+      setupData,
     });
 
     const scriptDAO = new ScriptDAO(scriptModel);
 
     const script = new Script({
       id: scriptModel.id,
-      setupData,
       history,
       randomSeedString,
       scriptDAO,
+      setupData,
     });
 
     scripts.push(script);
@@ -64,27 +64,21 @@ export const ScriptRepository = {
       throw Error("Script not found");
     }
 
-    const { randomSeedString, initialState, actions } = scriptModel;
+    const { randomSeedString, setupData, actions } = scriptModel;
 
     const history: any = {
-      initialState,
+      initialState: getInitialState(),
       actions,
     };
 
     const scriptDAO = new ScriptDAO(scriptModel);
 
-    const defaultSetupData: SetupData = {
-      depthLimit: 3,
-      initialQuestions: [],
-      reviewers: [],
-    };
-
     const script = new Script({
       id: scriptModel.id,
-      setupData: defaultSetupData,
       history,
       randomSeedString,
       scriptDAO,
+      setupData,
     });
 
     scripts.push(script);

@@ -5,9 +5,9 @@ import { FactoredEvaluationScriptRepository } from "./script-registry/factored-e
 export const createFactoredEvaluationRun = async () => {
   const factoredEvaluationScript = await FactoredEvaluationScriptRepository.create(
     {
-      experts: {
-        honest: ["1@email.com"],
-        malicious: ["2@email.com"],
+      setupData: {
+        initialExperts: { honest: ["1@email.com"], malicious: ["2@email.com"] },
+        rootLevelQuestion: "",
       },
     },
   );

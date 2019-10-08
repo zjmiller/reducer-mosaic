@@ -44,35 +44,35 @@ export type FactoredEvaluationScriptHistory = {
   actions: FactoredEvaluationAction[];
 };
 
+export type SetupData = {
+  rootLevelQuestion: string;
+  initialExperts: Experts;
+};
+
 export class FactoredEvaluationScript implements IScript {
   public id: string;
   private state: FactoredEvaluationScriptState;
   private history: FactoredEvaluationScriptHistory;
   private randomSeedString: string; // used to make ensure deterministic id generation in reducer
 
-  private rootLevelQuestion: string;
-
-  private initialExperts: Experts;
+  private setupData: SetupData;
   private scriptDAO: ScriptDAO;
 
   constructor({
     id,
-    rootLevelQuestion,
-    experts,
+    setupData,
     history,
     randomSeedString,
     scriptDAO,
   }: {
     id: string;
-    rootLevelQuestion: string;
-    experts: Experts;
+    setupData: SetupData;
     history: FactoredEvaluationScriptHistory;
     randomSeedString: string;
     scriptDAO: ScriptDAO;
   }) {
     this.id = id;
-    this.rootLevelQuestion = rootLevelQuestion;
-    this.initialExperts = experts;
+    this.setupData;
     this.history = history;
     this.randomSeedString = randomSeedString;
     this.scriptDAO = scriptDAO;
@@ -161,7 +161,7 @@ export class FactoredEvaluationScript implements IScript {
     const newScript = await FactoredEvaluationScriptRepository.create({
       history: copyHistory,
       randomSeedString: this.randomSeedString,
-      experts: this.initialExperts,
+      setupData: this.setupData,
     });
 
     return newScript;
@@ -176,9 +176,7 @@ export class FactoredEvaluationScript implements IScript {
   private setupRun(): void {
     const action = {
       actionType: "SETUP_RUN" as "SETUP_RUN",
-      rootLevelQuestion: this.rootLevelQuestion,
-      experts: this.initialExperts,
-      randomSeedString: this.randomSeedString,
+      setupData: { ...this.setupData, randomSeedString: this.randomSeedString },
     };
 
     this.state = this.reducer(this.state, action);
