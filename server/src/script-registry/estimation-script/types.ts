@@ -44,54 +44,9 @@ export const properties = [
   "length / time^2",
 ];
 
-export type Property =
-  | "number"
-  | "volume"
-  | "mass"
-  | "length"
-  | "area"
-  | "time"
-  | "density"
-  | "number / number"
-  | "height"
-  | "width"
-  | "mass / mass"
-  | "volume / time"
-  | "money"
-  | "number / time"
-  | "force"
-  | "energy"
-  | "food calories"
-  | "volume / volume"
-  | "length / time"
-  | "mass / time"
-  | "number / area"
-  | "length / length"
-  | "food calories / mass"
-  | "mass / volume"
-  | "number / mass"
-  | "time / time"
-  | "number / volume"
-  | "pressure"
-  | "area / area"
-  | "mass / money"
-  | "money / energy"
-  | "radius"
-  | "volume / mass"
-  | "force / mass"
-  | "pressure / time"
-  | "energy / time"
-  | "energy / mass"
-  | "volume / height"
-  | "money / time"
-  | "volume / number"
-  | "length / time^2";
-
 export type Aggregation = string;
-// | "division"
-// | "multiplication"
-// | "addition"
-// | "subtraction";
+
+export type FormalQuestion = { property?: string; entity: string };
 
 // ACTIONS and REPLIES
 
@@ -231,9 +186,7 @@ export interface IHistory {
 
 export type History = IHistory;
 
-// TEMPLATE
-
-export type FormalQuestion = { property?: string; entity: string };
+// REPLY
 
 export type Reply = GenerationReply | FormalizationReply | DecomposerReply;
 
@@ -255,6 +208,8 @@ export type DecomposerReply =
     }
   | { replyType: "Answer"; comments: string }
   | { replyType: "InvalidQuestion"; comments: string };
+
+// TEMPLATE
 
 export type Template =
   | GeneratorTemplate
