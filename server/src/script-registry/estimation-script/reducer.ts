@@ -37,14 +37,14 @@ export function rootReducer(state: State, action: Action) {
       workspace.assignedTo = action.userId;
 
       // Make sure there's always an available generate questions workspace
-      // if (workspace.workspaceType === "GENERATE_QUESTIONS_WORKSPACE") {
-      //   draftState.generateQuestionsWorkspaces.push({
-      //     id: draftState.idIndex++,
-      //     workspaceType: "GENERATE_QUESTIONS_WORKSPACE",
-      //     assignedTo: null,
-      //     isActive: true,
-      //   });
-      // }
+      if (workspace.workspaceType === "GENERATE_QUESTIONS_WORKSPACE") {
+        draftState.generateQuestionsWorkspaces.push({
+          id: draftState.idIndex++,
+          workspaceType: "GENERATE_QUESTIONS_WORKSPACE",
+          assignedTo: null,
+          isActive: true,
+        });
+      }
     } else if (action.actionType === "REPLY") {
       const { reply, workspaceId } = action;
 
