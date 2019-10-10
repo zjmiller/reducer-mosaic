@@ -1,3 +1,6 @@
+import * as _ from "lodash";
+
+import { Action as ActionModel } from "../../db/models/action";
 import { Script as ScriptModel } from "../../db/models/script";
 
 import { Script } from "./index";
@@ -7,8 +10,13 @@ import { History, SetupData } from "./types";
 export class ScriptDAO {
   constructor(private modelInstance: ScriptModel) {}
 
-  public async saveActionToDb() {
-    await this.modelInstance.update({ actions: this.modelInstance.actions });
+  public async saveActionToDb(action: any, index: number) {
+    const actionModelInstance = await ActionModel.create({
+      content: action,
+      index,
+    });
+
+    await this.modelInstance.$add("action", actionModelInstance);
   }
 }
 
@@ -64,11 +72,15 @@ export const ScriptRepository = {
       throw Error("Script not found");
     }
 
-    const { randomSeedString, setupData, actions } = scriptModel;
+    const { randomSeedString, setupData } = scriptModel;
+
+    const actions = await scriptModel.$get("actions");
+    const sortedActions = _.sortBy(actions, "index") as ActionModel[];
+    const sortedActionsWithoutMetadata = sortedActions.map(a => a.content);
 
     const history: any = {
       initialState: getInitialState(),
-      actions,
+      actions: sortedActionsWithoutMetadata,
     };
 
     const scriptDAO = new ScriptDAO(scriptModel);

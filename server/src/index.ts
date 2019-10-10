@@ -1,4 +1,4 @@
-import { createEstimationRun } from "./create-estimation-run";
+//import { createEstimationRun } from "./create-estimation-run";
 import { ensureDbInitialized, setupDBTables } from "./db";
 import { startServer } from "./graph-ql-server";
 import { TopLevelScheduler } from "./top-level-scheduler";
@@ -10,9 +10,9 @@ async function main(): Promise<undefined> {
 
   const topLevelScheduler = new TopLevelScheduler();
 
-  // create 50 users
+  // create 1 users
   let i = 0;
-  while (i++ < 50) {
+  while (i++ < 1) {
     try {
       await UserRepository.findUserByEmail(`${i}@email.com`);
     } catch (e) {
@@ -22,7 +22,7 @@ async function main(): Promise<undefined> {
     }
   }
 
-  await createEstimationRun();
+  //await createEstimationRun();
 
   await startServer(topLevelScheduler);
 
