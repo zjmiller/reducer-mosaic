@@ -1,5 +1,7 @@
 import Sequelize from "sequelize";
-import { Column, Model, Table } from "sequelize-typescript";
+import { Column, HasMany, Model, Table } from "sequelize-typescript";
+
+import { Action } from "./action";
 
 @Table
 export class Script extends Model<Script> {
@@ -29,9 +31,6 @@ export class Script extends Model<Script> {
   })
   public setupData: any;
 
-  @Column({
-    type: Sequelize.JSON,
-    allowNull: false,
-  })
-  public actions: any[];
+  @HasMany(() => Action)
+  public actions: Action[];
 }

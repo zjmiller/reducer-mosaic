@@ -179,11 +179,7 @@ export class FactoredEvaluationScript implements IScript {
       setupData: { ...this.setupData, randomSeedString: this.randomSeedString },
     };
 
-    this.state = this.reducer(this.state, action);
-
-    // record action in script history
-    this.history.actions.push(action);
-    this.scriptDAO.saveActionToDb();
+    this.dispatchAction(action);
   }
 
   public assignUserToInteraction({
@@ -207,11 +203,7 @@ export class FactoredEvaluationScript implements IScript {
       userId: user.id,
     };
 
-    this.state = this.reducer(this.state, action);
-
-    // record action in script history
-    this.history.actions.push(action);
-    this.scriptDAO.saveActionToDb();
+    this.dispatchAction(action);
 
     const updatedWorkspace = this.getAllWorkspaces().find(
       w => w.id === interaction.id,
@@ -245,19 +237,11 @@ export class FactoredEvaluationScript implements IScript {
       reply,
     };
 
-    this.state = this.reducer(this.state, action);
-
-    // record action in script history
-    this.history.actions.push(action);
-    this.scriptDAO.saveActionToDb();
+    this.dispatchAction(action);
   }
 
   public processAdminAction(action: any) {
-    this.state = this.reducer(this.state, action);
-
-    // record action in script history
-    this.history.actions.push(action);
-    this.scriptDAO.saveActionToDb();
+    this.dispatchAction(action);
   }
 
   private reducer(
@@ -268,6 +252,14 @@ export class FactoredEvaluationScript implements IScript {
 
     deepFreeze(newState); // enforce immutability
     return newState;
+  }
+
+  private dispatchAction(action: FactoredEvaluationAction) {
+    this.state = this.reducer(this.state, action);
+
+    // record action in script history
+    this.history.actions.push(action);
+    this.scriptDAO.saveActionToDb(action, this.history.actions.length - 1);
   }
 
   private getAllWorkspaces() {

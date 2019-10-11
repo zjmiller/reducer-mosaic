@@ -195,6 +195,6 @@ export class Script implements IScript {
 
     // record action in script history
     this.history.actions.push(action);
-    this.scriptDAO.saveActionToDb();
+    this.scriptDAO.saveActionToDb(action, this.history.actions.length - 1);
   }
 }
