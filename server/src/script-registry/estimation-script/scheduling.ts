@@ -1,5 +1,5 @@
 import { User } from "../../user/user";
-import { IState } from "./types";
+import { IState, Workspace } from "./types";
 import { getAllWorkspaces } from "./utils";
 
 function workspacePriority(workspace: any): number {
@@ -14,8 +14,20 @@ function workspacePriority(workspace: any): number {
   return 999;
 }
 
-export function getEligibleWorkspacesForUser(state: IState, user: User) {
+export function getEligibleWorkspacesForUser(
+  state: IState,
+  user: User,
+): Workspace[] {
   let allWorkspaces = getAllWorkspaces(state);
+
+  const alreadyAssignedWorkspace = allWorkspaces.find(
+    w => w.assignedTo === user.id,
+  );
+
+  if (alreadyAssignedWorkspace) {
+    return [alreadyAssignedWorkspace];
+  }
+
   allWorkspaces = allWorkspaces.filter(
     w => w.isActive && w.assignedTo === null,
   );
