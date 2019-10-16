@@ -1,5 +1,5 @@
 import { User as UserModel } from "../db/models/user";
-import { User } from "./index";
+import { User } from "./user";
 
 export type UserDAO = UserModel;
 

@@ -1,10 +1,9 @@
 import { GraphQLJSON, GraphQLJSONObject } from "graphql-type-json";
 
-import { createFactoredEvaluationRun } from "../create-factored-evaluation-run";
 import { Reply } from "../reply";
-import { Run } from "../run";
-import { RunRepository } from "../run/run-repository";
-import { TopLevelScheduler } from "../top-level-scheduler";
+import { Run } from "../run/run";
+import { RunRepository } from "../run/repository";
+import { TopLevelScheduler } from "../top-level-scheduler/top-level-scheduler";
 import { UserRepository } from "../user/user-repository";
 
 export const createResolvers = (topLevelScheduler: TopLevelScheduler): any => ({
@@ -17,7 +16,7 @@ export const createResolvers = (topLevelScheduler: TopLevelScheduler): any => ({
       root: any,
       { runId, index }: { runId: string; index: number },
     ) => {
-      const run = await RunRepository.findRunByPk(runId);
+      const run = await RunRepository.findByPk(runId);
       if (!run) {
         throw Error("Run not found.");
       }
@@ -37,19 +36,26 @@ export const createResolvers = (topLevelScheduler: TopLevelScheduler): any => ({
 
     submitReply: async (
       root: any,
-      { reply, userEmail }: { reply: any; userEmail: string },
+      {
+        interactionId,
+        reply,
+        userEmail,
+      }: { interactionId: string; reply: any; userEmail: string },
     ) => {
       const user = await UserRepository.findUserByEmail(userEmail);
       if (!user) {
         throw Error("No user found");
       }
 
-      topLevelScheduler.processReply({ reply: reply as Reply, user });
+      topLevelScheduler.processReply({
+        interactionId,
+        reply: reply as Reply,
+        user,
+      });
     },
 
     totalReset: async () => {
       RunRepository.reset();
-      createFactoredEvaluationRun();
       return true;
     },
 
@@ -57,7 +63,7 @@ export const createResolvers = (topLevelScheduler: TopLevelScheduler): any => ({
       root: any,
       { runId, action }: { runId: string; action: any },
     ) => {
-      const run = await RunRepository.findRunByPk(runId);
+      const run = await RunRepository.findByPk(runId);
       if (!run) {
         throw Error("Run not found.");
       }
@@ -68,7 +74,7 @@ export const createResolvers = (topLevelScheduler: TopLevelScheduler): any => ({
 
   Query: {
     run: async (root: any, { id }: { id: string }) => {
-      const run = await RunRepository.findRunByPk(id);
+      const run = await RunRepository.findByPk(id);
       if (!run) {
         throw Error("Run not found.");
       }

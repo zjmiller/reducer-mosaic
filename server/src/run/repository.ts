@@ -1,9 +1,9 @@
-import { Run } from "./index";
+import { Run } from "./run";
 
 import { Run as RunModel } from "../db/models/run";
-import { IRunLevelScheduler } from "../run-level-scheduler";
+import { IRunLevelScheduler } from "../run-level-scheduler/run-level-scheduler";
 import { TrivialRunLevelScheduler } from "../run-level-scheduler-registry/trivial-run-level-scheduler";
-import { IScript } from "../script";
+import { IScript } from "../script/script";
 import { ScriptRepository } from "../script/script-repository";
 
 const runs: Run[] = [];
@@ -21,7 +21,7 @@ export const RunRepository = {
     return run;
   },
 
-  async findRunByPk(pk: string) {
+  async findByPk(pk: string) {
     const cachedRun = runs.find(r => r.id === pk);
     if (cachedRun) {
       return cachedRun;
@@ -59,7 +59,7 @@ export const RunRepository = {
 
     const runsToLoad = await Promise.all(
       runIds.map(async rId => {
-        return await RunRepository.findRunByPk(rId);
+        return await RunRepository.findByPk(rId);
       }),
     );
 

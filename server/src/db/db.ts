@@ -2,6 +2,7 @@ import { Sequelize } from "sequelize-typescript";
 import sqlite3 from "sqlite3";
 
 import { Action } from "./models/action";
+import { Interaction } from "./models/interaction";
 import { Run } from "./models/run";
 import { Script } from "./models/script";
 import { User } from "./models/user";
@@ -20,8 +21,9 @@ export async function ensureDbInitialized() {
 export async function setupDBTables(
   { force }: { force: boolean } = { force: false },
 ) {
-  await sequelize.addModels([Action, Run, Script, User]);
+  await sequelize.addModels([Action, Interaction, Run, Script, User]);
   await Action.sync({ force });
+  await Interaction.sync({ force });
   await Run.sync({ force });
   await Script.sync({ force });
   await User.sync({ force });

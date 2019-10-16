@@ -12,8 +12,12 @@ const FIND_WORK = gql`
 `;
 
 const REPLY = gql`
-  mutation($reply: JSON, $userEmail: String) {
-    submitReply(reply: $reply, userEmail: $userEmail)
+  mutation($interactionId: ID, $reply: JSON, $userEmail: String) {
+    submitReply(
+      interactionId: $interactionId
+      reply: $reply
+      userEmail: $userEmail
+    )
   }
 `;
 
@@ -26,12 +30,15 @@ export const ParticipationSection: React.FC<any> = ({ email }) => {
 
   const [reply] = useMutation(REPLY);
 
-  const handleReply = (variables: any) =>
-    reply({
+  const handleReply = (variables: any) => {
+    console.log(variables);
+    return reply({
       variables
     });
+  };
 
   if (data && data !== savedData) {
+    console.log("data", data);
     setSavedData(data);
   }
 
@@ -51,17 +58,26 @@ export const ParticipationSection: React.FC<any> = ({ email }) => {
           find work
         </Button>
       </div>
-
-      {!error && savedData && shouldShowTemplate && (
-        <TemplateRouter
-          templateData={savedData.findWorkForUser.templateData}
-          templateIdentifier={savedData.findWorkForUser.templateIdentifier}
-          endTemplateSession={() => setShouldShowTemplate(false)}
-          findWork={findWork}
-          email={email}
-          handleReply={handleReply}
-        />
-      )}
+      {!error &&
+        savedData &&
+        savedData.findWorkForUser === null &&
+        shouldShowTemplate && <div>No work found</div>}
+      {!error &&
+        savedData &&
+        savedData.findWorkForUser &&
+        shouldShowTemplate && (
+          <TemplateRouter
+            interactionId={savedData.findWorkForUser.interactionId}
+            templateData={savedData.findWorkForUser.template.templateData}
+            templateIdentifier={
+              savedData.findWorkForUser.template.templateIdentifier
+            }
+            endTemplateSession={() => setShouldShowTemplate(false)}
+            findWork={findWork}
+            email={email}
+            handleReply={handleReply}
+          />
+        )}
       {error && (
         <div style={{ color: "red", marginTop: "10px" }}>{error.message}</div>
       )}

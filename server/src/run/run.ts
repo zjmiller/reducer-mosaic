@@ -1,9 +1,11 @@
-import { Interaction } from "../interaction";
+import { Interaction } from "../interaction/interaction";
 import { Reply } from "../reply";
-import { IRunLevelScheduler } from "../run-level-scheduler";
-import { IScript } from "../script";
-import { User } from "../user";
-import { RunRepository } from "./run-repository";
+import { IRunLevelScheduler } from "../run-level-scheduler/run-level-scheduler";
+import { IScript } from "../script/script";
+import { Template } from "../template/template";
+import { User } from "../user/user";
+import { RunRepository } from "./repository";
+import { Workspace } from "../workspace/workspace";
 
 export class Run {
   constructor(
@@ -12,19 +14,13 @@ export class Run {
     private runLevelScheduler: IRunLevelScheduler,
   ) {}
 
-  public getEligibleInteractionsForUser(user: User) {
-    return this.runLevelScheduler.getEligibleInteractionsForUser(user);
+  public getEligibleWorkspacesForUser(user: User): Workspace[] {
+    return this.runLevelScheduler
+      .getEligibleWorkspacesForUser(user)
+      .map(i => ({ runId: this.id, ...i }));
   }
 
-  public getAlreadyAssignedInteractionForUser(user: User) {
-    return this.runLevelScheduler.getAlreadyAssignedInteractionForUser(user);
-  }
-
-  public getAllPendingInteractions() {
-    return this.script.getAllPendingInteractions();
-  }
-
-  public generateTemplate(interaction: Interaction) {
+  public generateTemplate(interaction: Interaction): Template {
     return this.script.generateTemplate(interaction);
   }
 
@@ -85,15 +81,15 @@ export class Run {
     this.script.processReply({ interaction, reply, user });
   }
 
-  public assignUserToInteraction({
-    interaction,
+  public assignUserToWorkspace({
+    workspace,
     user,
   }: {
-    interaction: Interaction;
+    workspace: Workspace;
     user: User;
   }) {
-    this.runLevelScheduler.assignUserToInteraction({ interaction, user });
-    return this.script.assignUserToInteraction({ interaction, user });
+    this.runLevelScheduler.assignUserToWorkspace({ workspace, user });
+    return this.script.assignUserToWorkspace({ workspace, user });
   }
 
   public processAdminAction(action: any) {

@@ -1,5 +1,5 @@
 import { TrivialRunLevelScheduler } from "./run-level-scheduler-registry/trivial-run-level-scheduler";
-import { RunRepository } from "./run/run-repository";
+import { RunRepository } from "./run/repository";
 import { ScriptRepository as EstimationScriptRepository } from "./script-registry/estimation-script/repository";
 
 export const createEstimationRun = async () => {

@@ -1,11 +1,12 @@
 // tslint:disable:no-empty
 
-import { Interaction } from "../interaction";
+import { Interaction } from "../interaction/interaction";
 import { Reply } from "../reply";
-import { IRunLevelScheduler } from "../run-level-scheduler";
+import { IRunLevelScheduler } from "../run-level-scheduler/run-level-scheduler";
 import { RunLevelSchedulerState } from "../run-level-scheduler/run-level-scheduler-state";
-import { IScript } from "../script";
-import { User } from "../user";
+import { IScript } from "../script/script";
+import { User } from "../user/user";
+import { Workspace } from "../workspace/workspace";
 
 export class TrivialRunLevelScheduler implements IRunLevelScheduler {
   private script: IScript;
@@ -16,12 +17,8 @@ export class TrivialRunLevelScheduler implements IRunLevelScheduler {
     this.state = state === undefined ? null : state;
   }
 
-  public getEligibleInteractionsForUser(user: User) {
-    return this.script.getEligibleInteractionsForUser(user);
-  }
-
-  public getAlreadyAssignedInteractionForUser(user: User) {
-    return this.script.getAlreadyAssignedInteractionForUser(user);
+  public getEligibleWorkspacesForUser(user: User) {
+    return this.script.getEligibleWorkspacesForUser(user);
   }
 
   public getState() {
@@ -47,11 +44,11 @@ export class TrivialRunLevelScheduler implements IRunLevelScheduler {
     user: User;
   }) {}
 
-  public assignUserToInteraction({
-    interaction,
+  public assignUserToWorkspace({
+    workspace,
     user,
   }: {
-    interaction: Interaction;
+    workspace: Workspace;
     user: User;
   }) {}
 }

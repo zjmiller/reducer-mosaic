@@ -1,14 +1,13 @@
 import { RunLevelSchedulerState } from "./run-level-scheduler-state";
 
-import { Interaction, MaybeInteraction } from "../interaction";
+import { Interaction } from "../interaction/interaction";
 import { Reply } from "../reply";
-import { IScript } from "../script";
-import { User } from "../user";
+import { IScript } from "../script/script";
+import { User } from "../user/user";
+import { Workspace } from "../workspace/workspace";
 
 export interface IRunLevelScheduler {
-  getEligibleInteractionsForUser(user: User): Interaction[];
-
-  getAlreadyAssignedInteractionForUser(user: User): MaybeInteraction;
+  getEligibleWorkspacesForUser(user: User): Workspace[];
 
   getState(): RunLevelSchedulerState;
 
@@ -27,11 +26,11 @@ export interface IRunLevelScheduler {
     user: User;
   }): void;
 
-  assignUserToInteraction({
-    interaction,
+  assignUserToWorkspace({
+    workspace,
     user,
   }: {
-    interaction: Interaction;
+    workspace: Workspace;
     user: User;
   }): void;
 }

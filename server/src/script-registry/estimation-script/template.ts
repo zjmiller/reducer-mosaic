@@ -1,7 +1,10 @@
 import { properties, State, Template, Workspace } from "./types";
 import { getDepthOfDecompositionWorkspace } from "./utils";
 
-export function generateTemplate(state: State, workspace: Workspace): Template {
+export function generateTemplateFromWorkspace(
+  state: State,
+  workspace: Workspace,
+): Template {
   if (workspace.workspaceType === "GENERATE_QUESTIONS_WORKSPACE") {
     return {
       templateIdentifier: "generator_template",

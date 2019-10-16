@@ -5,7 +5,7 @@ import path from "path";
 import { createResolvers } from "./resolvers";
 import { typeDefs } from "./type-defs";
 
-import { TopLevelScheduler } from "../top-level-scheduler";
+import { TopLevelScheduler } from "../top-level-scheduler/top-level-scheduler";
 
 export function startServer(topLevelScheduler: TopLevelScheduler) {
   return new Promise(resolve => {

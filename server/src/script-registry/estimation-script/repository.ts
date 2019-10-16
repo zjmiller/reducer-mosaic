@@ -3,7 +3,7 @@ import * as _ from "lodash";
 import { Action as ActionModel } from "../../db/models/action";
 import { Script as ScriptModel } from "../../db/models/script";
 
-import { Script } from "./index";
+import { Script } from "./estimation-script";
 import { getInitialState } from "./initial-state";
 import { History, SetupData } from "./types";
 

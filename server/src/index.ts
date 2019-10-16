@@ -1,12 +1,12 @@
-//import { createEstimationRun } from "./create-estimation-run";
-import { ensureDbInitialized, setupDBTables } from "./db";
-import { startServer } from "./graph-ql-server";
-import { TopLevelScheduler } from "./top-level-scheduler";
+import { createEstimationRun } from "./create-estimation-run";
+import { ensureDbInitialized, setupDBTables } from "./db/db";
+import { startServer } from "./graph-ql-server/server";
+import { TopLevelScheduler } from "./top-level-scheduler/top-level-scheduler";
 import { UserRepository } from "./user/user-repository";
 
 async function main(): Promise<undefined> {
   await ensureDbInitialized();
-  await setupDBTables();
+  await setupDBTables({ force: true });
 
   const topLevelScheduler = new TopLevelScheduler();
 
@@ -22,7 +22,7 @@ async function main(): Promise<undefined> {
     }
   }
 
-  //await createEstimationRun();
+  await createEstimationRun();
 
   await startServer(topLevelScheduler);
 

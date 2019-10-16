@@ -33,13 +33,13 @@ const aggregationOptions: string[][] = [
 
 type DecomposerResponse =
   | {
-      type: "Decomposition";
+      replyType: "Decomposition";
       subquestions: FormalQuestion[];
       aggregation: string;
       comments: string;
     }
-  | { type: "Answer"; comments: string }
-  | { type: "InvalidQuestion"; comments: string };
+  | { replyType: "Answer"; comments: string }
+  | { replyType: "InvalidQuestion"; comments: string };
 
 interface DecomposerData {
   readonly question: FormalQuestion;
@@ -60,7 +60,7 @@ const DecompositionFormComponent: React.FunctionComponent<
   let subquestionsInit: FormalQuestion[] = [{}, {}];
   let aggregationInit = "";
   let originalComments: string | undefined;
-  if (data.response != null && data.response.type === "Decomposition") {
+  if (data.response != null && data.response.replyType === "Decomposition") {
     subquestionsInit = data.response.subquestions;
     aggregationInit = data.response.aggregation;
     originalComments = data.response.comments;
@@ -128,6 +128,7 @@ const DecompositionFormComponent: React.FunctionComponent<
       {subquestions.map((q, i) => {
         return (
           <FormalQuestionInputComponent
+            key={i}
             label={"A" + (i + 1).toString()}
             FormalQuestion={q}
             propertyOptions={data.propertyOptions}
@@ -217,7 +218,7 @@ const AnswerFormComponent: React.FunctionComponent<
   const data = (props.templateData as unknown) as DecomposerData; // TODO
   const [comments, setComments] = React.useState("");
   let originalComments: string | undefined;
-  if (data.response != null && data.response.type === "Answer") {
+  if (data.response != null && data.response.replyType === "Answer") {
     originalComments = data.response.comments;
   }
 
@@ -243,7 +244,7 @@ const InvalidQuestionFormComponent: React.FunctionComponent<
   const data = (props.templateData as unknown) as DecomposerData; // TODO
   const [comments, setComments] = React.useState("");
   let originalComments: string | undefined;
-  if (data.response != null && data.response.type === "InvalidQuestion") {
+  if (data.response != null && data.response.replyType === "InvalidQuestion") {
     originalComments = data.response.comments;
   }
 
@@ -271,7 +272,7 @@ const DecomposerComponent: React.FunctionComponent<any> = props => {
   const isReview = "response" in data;
   let defaultActiveKey = "Decomposition";
   if (data.response != null) {
-    defaultActiveKey = data.response.type;
+    defaultActiveKey = data.response.replyType;
   }
 
   return (

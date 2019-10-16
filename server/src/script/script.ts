@@ -1,19 +1,15 @@
+import { Interaction } from "../interaction/interaction";
 import { ScriptHistory } from "./script-history";
 import { ScriptState } from "./script-state";
-
-import { Interaction, MaybeInteraction } from "../interaction";
 import { Reply } from "../reply";
-import { Template } from "../template-info";
-import { User } from "../user";
+import { Template } from "../template/template";
+import { User } from "../user/user";
+import { Workspace } from "../workspace/workspace";
 
 export interface IScript {
   id: string;
 
-  getAlreadyAssignedInteractionForUser(user: User): MaybeInteraction;
-
-  getEligibleInteractionsForUser(user: User): Interaction[];
-
-  getAllPendingInteractions(): Interaction[];
+  getEligibleWorkspacesForUser(user: User): Workspace[];
 
   generateTemplate(interaction: Interaction): Template;
 
@@ -25,13 +21,13 @@ export interface IScript {
 
   createCopy(i?: number): Promise<IScript>;
 
-  assignUserToInteraction({
-    interaction,
+  assignUserToWorkspace({
+    workspace,
     user,
   }: {
-    interaction: Interaction;
+    workspace: Workspace;
     user: User;
-  }): Interaction;
+  }): number;
 
   processReply({
     interaction,

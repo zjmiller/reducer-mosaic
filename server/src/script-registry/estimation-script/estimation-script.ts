@@ -1,13 +1,10 @@
 import deepFreeze from "deep-freeze";
 
-import { generateTemplate } from "./template";
+import { generateTemplateFromWorkspace } from "./template";
 import { getInitialState } from "./initial-state";
 import { rootReducer } from "./reducer";
 import { convertReplyIntoAction } from "./reply";
-import {
-  getAlreadyAssignedInteractionsForUser,
-  getEligibleInteractionsForUser,
-} from "./scheduling";
+import { getEligibleWorkspacesForUser } from "./scheduling";
 import { ScriptDAO } from "./repository";
 import { getAllWorkspaces } from "./utils";
 
@@ -21,9 +18,9 @@ import {
   Workspace,
 } from "./types";
 
-import { Interaction } from "../../interaction";
-import { IScript } from "../../script";
-import { User } from "../../user";
+import { Interaction } from "../../interaction/interaction";
+import { IScript } from "../../script/script";
+import { User } from "../../user/user";
 import { ScriptRepository } from "./repository";
 
 export class Script implements IScript {
@@ -63,16 +60,8 @@ export class Script implements IScript {
     }
   }
 
-  public getEligibleInteractionsForUser(user: User) {
-    return getEligibleInteractionsForUser(this.state, user);
-  }
-
-  public getAlreadyAssignedInteractionForUser(user: User) {
-    return getAlreadyAssignedInteractionsForUser(this.state, user);
-  }
-
-  public getAllPendingInteractions() {
-    return getAllWorkspaces(this.state).filter(w => w.isActive);
+  public getEligibleWorkspacesForUser(user: User) {
+    return getEligibleWorkspacesForUser(this.state, user);
   }
 
   public getHistory() {
@@ -112,8 +101,22 @@ export class Script implements IScript {
     return newScript;
   }
 
-  public generateTemplate(workspace: Workspace): Template {
-    return generateTemplate(this.state, workspace);
+  public generateTemplate(interaction: Interaction): Template {
+    const assignAction = this.history.actions[interaction.assignActionIndex];
+
+    if (!assignAction || assignAction.actionType !== "ASSIGN_USER") {
+      throw Error("");
+    }
+
+    const workspace = getAllWorkspaces(this.state).find(
+      w => w.id === assignAction.workspaceId,
+    );
+
+    if (!workspace) {
+      throw Error("");
+    }
+
+    return generateTemplateFromWorkspace(this.state, workspace);
   }
 
   private setupRun(): void {
@@ -125,19 +128,19 @@ export class Script implements IScript {
     this.dispatchAction(action);
   }
 
-  public assignUserToInteraction({
-    interaction,
+  public assignUserToWorkspace({
+    workspace,
     user,
   }: {
-    interaction: Interaction;
+    workspace: Workspace;
     user: User;
-  }): Interaction {
-    const workspace = getAllWorkspaces(this.state).find(
-      w => w.id === interaction.id,
+  }): number {
+    const doesWorkspaceExist = getAllWorkspaces(this.state).find(
+      w => w.id === workspace.id,
     );
 
-    if (!workspace) {
-      throw Error("Interaction doesn't correspond to a workspace");
+    if (!doesWorkspaceExist) {
+      throw Error("Workspace doesn't exist");
     }
 
     const action = {
@@ -148,15 +151,9 @@ export class Script implements IScript {
 
     this.dispatchAction(action);
 
-    const updatedWorkspace = getAllWorkspaces(this.state).find(
-      w => w.id === interaction.id,
-    );
+    const actionIndex = this.history.actions.length - 1;
 
-    if (!updatedWorkspace) {
-      throw Error("Updated workspace doesn't exist");
-    }
-
-    return updatedWorkspace;
+    return actionIndex;
   }
 
   public processReply({
@@ -165,18 +162,32 @@ export class Script implements IScript {
   }: {
     interaction: Interaction;
     reply: Reply;
-  }) {
+  }): number {
+    const assignAction = this.history.actions[interaction.assignActionIndex];
+
+    if (!assignAction) {
+      throw Error("");
+    }
+
+    if (assignAction.actionType !== "ASSIGN_USER") {
+      throw Error("");
+    }
+
     const workspace = getAllWorkspaces(this.state).find(
-      w => w.id === interaction.id,
+      w => w.id === assignAction.workspaceId,
     );
 
     if (!workspace) {
       throw Error("Interaction doesn't correspond to a workspace");
     }
 
-    const action = convertReplyIntoAction(reply, workspace);
+    const replyAction = convertReplyIntoAction(reply, workspace);
 
-    this.dispatchAction(action);
+    this.dispatchAction(replyAction);
+
+    const actionIndex = this.history.actions.length - 1;
+
+    return actionIndex;
   }
 
   public processAdminAction(action: any) {
