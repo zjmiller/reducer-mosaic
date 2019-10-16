@@ -31,7 +31,7 @@ export class Interaction {
     this.userId = userId;
   }
 
-  public async complete() {
+  public async markAsComplete() {
     await this.interactionDAO.update({
       endTimestamp: Date.now(),
     });

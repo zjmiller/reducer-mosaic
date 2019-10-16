@@ -85,13 +85,13 @@ export class TopLevelScheduler {
       throw Error("No run");
     }
 
+    await interaction.markAsComplete();
+
     run.processReply({
       interaction,
       reply,
       user,
     });
-
-    await interaction.complete();
   }
 
   private async findAlreadyAssignedInteractionForUser(
