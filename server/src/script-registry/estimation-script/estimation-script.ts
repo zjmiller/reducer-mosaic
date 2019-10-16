@@ -137,12 +137,28 @@ export class Script implements IScript {
     workspace: Workspace;
     user: User;
   }): number {
-    const doesWorkspaceExist = getAllWorkspaces(this.state).find(
-      w => w.id === workspace.id,
-    );
+    // first check to see if workspace already assigned to this user
+    // makes relationship between scheduler and script idempotent
+    // wrt assigning users to workspaces
+    const isWorkspaceAlreadyAssignedToUser = workspace.assignedTo === user.id;
 
-    if (!doesWorkspaceExist) {
-      throw Error("Workspace doesn't exist");
+    if (isWorkspaceAlreadyAssignedToUser) {
+      // calculate index of most recent action
+      // assigning this user to this workspace
+      let i = this.history.actions.length - 1;
+      for (; i >= 0; i++) {
+        const action = this.history.actions[i];
+        if (
+          action.actionType === "ASSIGN_USER" &&
+          action.userId === user.id &&
+          action.workspaceId === workspace.id
+        ) {
+          break;
+        }
+      }
+
+      // return index of this action
+      return i;
     }
 
     const action = {
@@ -183,6 +199,17 @@ export class Script implements IScript {
 
     if (!workspace) {
       throw Error("Interaction doesn't correspond to a workspace");
+    }
+
+    // thanks to the two checks below, relationship between
+    // scheduler and script wrt replies is pretty much idempotent
+
+    if (workspace.assignedTo !== assignAction.userId) {
+      throw Error("Workspace no longer assigned to user");
+    }
+
+    if (!workspace.isActive) {
+      throw Error("Workspace no longer active");
     }
 
     const replyAction = convertReplyIntoAction(reply, workspace);
