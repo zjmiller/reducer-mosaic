@@ -20,6 +20,8 @@ export class Interaction extends Model<Interaction> {
   })
   public id: string;
 
+  // a script can use this to uniquely identify
+  // the interaction within its state
   @Column(Sequelize.INTEGER)
   public internalScriptReference: number;
 
@@ -32,9 +34,11 @@ export class Interaction extends Model<Interaction> {
   @Column(Sequelize.INTEGER)
   public endTimestamp: number;
 
+  // not used yet
   @Column(Sequelize.JSON)
   public template: JSON;
 
+  // not used yet
   @Column(Sequelize.JSON)
   public reply: JSON;
 
