@@ -7,7 +7,7 @@ export type MaybeInteraction = Interaction | null;
 export class Interaction {
   public id: string;
   public internalScriptReference: number;
-  public interactionDAO: InteractionDAO; // TODO change to private
+  private interactionDAO: InteractionDAO;
   public runId: string;
   public userId: string;
 
