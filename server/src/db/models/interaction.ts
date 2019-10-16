@@ -20,6 +20,9 @@ export class Interaction extends Model<Interaction> {
   })
   public id: string;
 
+  @Column(Sequelize.INTEGER)
+  public internalScriptReference: number;
+
   @Column({
     type: Sequelize.INTEGER,
     allowNull: false,
@@ -28,12 +31,6 @@ export class Interaction extends Model<Interaction> {
 
   @Column(Sequelize.INTEGER)
   public endTimestamp: number;
-
-  @Column(Sequelize.INTEGER)
-  public assignActionIndex: number;
-
-  @Column(Sequelize.INTEGER)
-  public replyActionIndex: number;
 
   @Column(Sequelize.JSON)
   public template: JSON;

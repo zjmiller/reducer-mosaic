@@ -7,10 +7,7 @@ import { Interaction as InteractionModel } from "../db/models/interaction";
 export class InteractionDAO {
   constructor(private modelInstance: InteractionModel) {}
 
-  public async update(fields: {
-    endTimestamp: number;
-    replyActionIndex: number;
-  }) {
+  public async update(fields: { endTimestamp: number }) {
     await this.modelInstance.update(fields);
   }
 }
@@ -19,16 +16,16 @@ const interactions: any[] = [];
 
 export const InteractionRepository = {
   async create({
-    assignActionIndex,
+    internalScriptReference,
     runId,
     userId,
   }: {
-    assignActionIndex: number;
+    internalScriptReference: number;
     runId: string;
     userId: string;
   }): Promise<Interaction> {
     const interactionModel = await InteractionModel.create({
-      assignActionIndex,
+      internalScriptReference,
       runId,
       startTimestamp: Date.now(),
       userId,
@@ -38,7 +35,7 @@ export const InteractionRepository = {
 
     const interaction = new Interaction({
       id: interactionModel.id,
-      assignActionIndex,
+      internalScriptReference,
       interactionDAO,
       runId,
       userId,
@@ -75,13 +72,13 @@ export const InteractionRepository = {
 };
 
 function modelIntoObject(interactionModel: InteractionModel) {
-  const { assignActionIndex, runId, userId } = interactionModel;
+  const { internalScriptReference, runId, userId } = interactionModel;
 
   const interactionDAO = new InteractionDAO(interactionModel);
 
   const interaction = new Interaction({
     id: interactionModel.id,
-    assignActionIndex,
+    internalScriptReference,
     interactionDAO,
     runId,
     userId,

@@ -102,7 +102,9 @@ export class Script implements IScript {
   }
 
   public generateTemplate(interaction: Interaction): Template {
-    const assignAction = this.history.actions[interaction.assignActionIndex];
+    const assignAction = this.history.actions[
+      interaction.internalScriptReference
+    ];
 
     if (!assignAction || assignAction.actionType !== "ASSIGN_USER") {
       throw Error("");
@@ -163,7 +165,9 @@ export class Script implements IScript {
     interaction: Interaction;
     reply: Reply;
   }): number {
-    const assignAction = this.history.actions[interaction.assignActionIndex];
+    const assignAction = this.history.actions[
+      interaction.internalScriptReference
+    ];
 
     if (!assignAction) {
       throw Error("");

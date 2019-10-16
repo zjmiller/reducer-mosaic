@@ -46,13 +46,13 @@ export class TopLevelScheduler {
 
       const { run, workspace } = runAndWorkspace;
 
-      const assignActionIndex = run.assignUserToWorkspace({
+      const internalScriptReference = run.assignUserToWorkspace({
         workspace,
         user,
       });
 
       const interaction = await InteractionRepository.create({
-        assignActionIndex,
+        internalScriptReference,
         runId: run.id,
         userId: user.id,
       });
@@ -85,13 +85,13 @@ export class TopLevelScheduler {
       throw Error("No run");
     }
 
-    const replyActionIndex = run.processReply({
+    run.processReply({
       interaction,
       reply,
       user,
     });
 
-    await interaction.complete({ replyActionIndex });
+    await interaction.complete();
   }
 
   private async findAlreadyAssignedInteractionForUser(
